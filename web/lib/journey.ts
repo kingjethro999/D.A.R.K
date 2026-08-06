@@ -103,11 +103,11 @@ export const JOURNEY: JourneyChapter[] = [
     ],
   },
   {
-    version: "v1.0.6",
-    codename: "PERFORMANCE & RELEASE",
+    version: "v1.0.7",
+    codename: "FOCUS & RELEASE",
     date: "AUG 2026",
     blurb:
-      "The polish pass. The clock flow was decoupled from the recomposition stream, app labels moved behind a cache, and the whole thing was compiled with R8, shrunk to 1.7MB, signed and released. This is the build on this website.",
+      "The focus pass. lock/unlock and hide became terminal commands, `hide <app>` asks for the PIN, and the prompt/cursor spacing bug was fixed on both the app and the web demo. Shrunk to 1.7MB, signed and released. This is the build on this website.",
     points: [
       "Clock flow decoupled — home screen no longer recomposes every minute",
       "App label cache — zero PackageManager lookups on the hot path",
@@ -118,5 +118,5 @@ export const JOURNEY: JourneyChapter[] = [
   },
 ];
 
-export const CURRENT_RELEASE = "1.0.6";
-export const CURRENT_BUILD = 7;
+export const CURRENT_RELEASE = "1.0.7";
+export const CURRENT_BUILD = 8;

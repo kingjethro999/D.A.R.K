@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -214,25 +216,15 @@ fun TerminalTextField(
                     fontFamily = FontFamily.Monospace,
                     fontSize = 16.sp
                 )
-                Box(contentAlignment = Alignment.CenterStart) {
+                Box(modifier = Modifier.width(IntrinsicSize.Min)) {
                     innerTextField()
-                    if (command.isEmpty()) {
-                        Text(
-                            text = "\u2588",
-                            color = TerminalGreen.copy(alpha = cursorAlpha),
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 16.sp
-                        )
-                    }
                 }
-                if (command.isNotEmpty()) {
-                    Text(
-                        text = "\u2588",
-                        color = TerminalGreen.copy(alpha = cursorAlpha),
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 16.sp
-                    )
-                }
+                Text(
+                    text = "\u2588",
+                    color = TerminalGreen.copy(alpha = cursorAlpha),
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 16.sp
+                )
             }
         }
     )

@@ -9,7 +9,7 @@ import { APP } from "@/lib/app";
 export const metadata: Metadata = {
   title: "Download — D.A.R.K.",
   description:
-    "Download D.A.R.K. v1.0.6 — a 1.7 MB signed APK. No Play Store, no ads, no tracking. Side-loadable on Android 8.0+.",
+    "Download D.A.R.K. v1.0.7 — a 1.7 MB signed APK. No Play Store, no ads, no tracking. Side-loadable on Android 8.0+.",
 };
 
 const APK_SHA256 = "5b9f906b0094866de0cd0c1c491bb5bb783e2e196c47fb4ac2ccc9bc60b7d09c";

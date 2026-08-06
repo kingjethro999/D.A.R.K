@@ -111,10 +111,9 @@ export default function JourneyPage() {
           <p className="mt-3 max-w-3xl font-mono text-xs leading-relaxed text-[#7A7A7A]">
             D.A.R.K. version.properties auto-increments the patch number and
             versionCode on every build, so the timeline above is grouped by
-            feature chapter rather than by individual increment. v1.0.6 is
-            the release shipped on this site; the next build is already one
-            patch higher. The full transcript of the build lives in the
-            repository&apos;s chat log.
+            feature chapter rather than by individual increment. v1.0.7 is
+            the release shipped on this site. The full transcript of the build
+            lives in the repository&apos;s chat log.
           </p>
         </div>
       </Container>

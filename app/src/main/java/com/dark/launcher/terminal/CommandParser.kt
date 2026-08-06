@@ -56,6 +56,9 @@ fun executeTerminalCommand(command: String, deps: TerminalDeps): Flow<String> {
         "stats" -> statsCommand(deps)
         "git" -> gitCommand(args, deps)
         "vault" -> vaultCommand(args, deps)
+        "lock" -> vaultLockCommand(args, deps)
+        "unlock" -> vaultUnlockCommand(args, deps)
+        "hide" -> hideCommand(args, deps)
         "logcat" -> ShellStream.run("logcat -d ${args.joinToString(" ")}")
         "echo" -> flowOf(args.joinToString(" "))
         "date" -> flowOf(java.text.SimpleDateFormat("EEE, MMM d yyyy HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()))
@@ -78,7 +81,10 @@ private fun buildHelpText(): String = """
       log [type] [v1] [v2]   log a workout (e.g. log sprint 100m 11.2s)
       stats               weekly fitness summary
       git refresh         pull GitHub stats (token set in settings)
-      vault lock|unlock   lock/unlock the AES vault
+      lock [app]          focus mode ON; with an app, adds it to the distract list
+      unlock [app]        focus mode OFF; with an app, removes it from the distract list
+      vault lock|unlock [app]  same as lock/unlock, plus the AES file vault
+      hide [app]          hide an app (asks for the hide pin)
       logcat [-t N]       dump system logcat
       version             show D.A.R.K. build info
       echo / date / whoami
@@ -287,22 +293,94 @@ private fun gitCommand(args: List<String>, deps: TerminalDeps): Flow<String> {
 }
 
 private fun vaultCommand(args: List<String>, deps: TerminalDeps): Flow<String> {
-    if (args.isEmpty() || (args[0] != "lock" && args[0] != "unlock")) {
-        return flowOf("usage: vault [lock|unlock]")
+    if (args.isEmpty()) return flowOf("usage: vault [lock|unlock] [app]")
+    return when (args[0]) {
+        "lock" -> vaultLockCommand(args.drop(1), deps, withFileVault = true)
+        "unlock" -> vaultUnlockCommand(args.drop(1), deps, withFileVault = true)
+        else -> flowOf("usage: vault [lock|unlock] [app]")
     }
-    return flow {
-        emit("vault ${args[0]} requires pin:")
+}
+
+private fun vaultLockCommand(
+    appArgs: List<String>,
+    deps: TerminalDeps,
+    withFileVault: Boolean = false
+): Flow<String> = flow {
+    val appName = appArgs.joinToString(" ").trim()
+    if (appName.isNotEmpty()) {
+        val target = findApp(deps.apps, appName)
+        if (target == null) {
+            emit("dark: no app found matching '$appName'")
+            return@flow
+        }
+        val current = deps.settings.vaultAppsFlow.first()
+        deps.settings.setVaultApps(current + target.packageName)
+        emit("'${target.name}' added to the distract list")
+    }
+    if (withFileVault) {
         val pin = deps.settings.pinFlow.first()
-        val result = if (args[0] == "lock") deps.vault.lock(pin) else deps.vault.unlock(pin)
-        result.fold(
-            onSuccess = { count ->
-                emit(if (args[0] == "lock") "VAULT LOCKED (${count} files encrypted)" else "VAULT UNLOCKED (${count} files decrypted)")
-            },
-            onFailure = { e ->
-                emit("dark: vault fault - ${e.message}")
-            }
+        deps.vault.lock(pin).fold(
+            onSuccess = { count -> emit("VAULT LOCKED ($count files encrypted)") },
+            onFailure = { e -> emit("dark: vault fault - ${e.message}") }
         )
-    }.flowOn(Dispatchers.IO)
+    } else {
+        deps.settings.setVaultLocked(true)
+    }
+    emit("FOCUS MODE ON")
+}.flowOn(Dispatchers.IO)
+
+private fun vaultUnlockCommand(
+    appArgs: List<String>,
+    deps: TerminalDeps,
+    withFileVault: Boolean = false
+): Flow<String> = flow {
+    val appName = appArgs.joinToString(" ").trim()
+    if (appName.isNotEmpty()) {
+        val target = findApp(deps.apps, appName)
+        if (target == null) {
+            emit("dark: no app found matching '$appName'")
+            return@flow
+        }
+        val current = deps.settings.vaultAppsFlow.first()
+        val remaining = current - target.packageName
+        deps.settings.setVaultApps(remaining)
+        emit("'${target.name}' removed from the distract list")
+        if (remaining.isNotEmpty()) {
+            emit("FOCUS MODE ON (${remaining.size} apps still distracted)")
+            return@flow
+        }
+    }
+    if (withFileVault) {
+        val pin = deps.settings.pinFlow.first()
+        deps.vault.unlock(pin).fold(
+            onSuccess = { count -> emit("VAULT UNLOCKED ($count files decrypted)") },
+            onFailure = { e -> emit("dark: vault fault - ${e.message}") }
+        )
+    } else {
+        deps.settings.setVaultLocked(false)
+    }
+    emit("FOCUS MODE OFF")
+}.flowOn(Dispatchers.IO)
+
+private fun hideCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    val appName = args.joinToString(" ").trim()
+    if (appName.isEmpty()) {
+        emit("usage: hide [app]")
+        return@flow
+    }
+    val target = findApp(deps.apps, appName)
+    if (target == null) {
+        emit("dark: no app found matching '$appName'")
+        return@flow
+    }
+    emit("'${target.name}' is being hidden - enter hide pin:")
+    val ok = deps.onPinVerify()
+    if (ok) {
+        deps.settings.hideApp(target.packageName)
+        emit("hidden: ${target.packageName}")
+    } else {
+        emit("dark: access denied - '${target.name}' not hidden")
+    }
 }
 
 private fun versionCommand(deps: TerminalDeps): Flow<String> = flow {
@@ -318,8 +396,8 @@ private fun versionCommand(deps: TerminalDeps): Flow<String> = flow {
 
 private val KNOWN_COMMANDS = listOf(
     "help", "clear", "source", "open", "run", "nox", "flash", "on", "off",
-    "wifi", "uuid", "b64", "json", "log", "stats", "git", "vault",
-    "logcat", "echo", "date", "whoami", "version"
+    "wifi", "uuid", "b64", "json", "log", "stats", "git", "vault", "lock",
+    "unlock", "hide", "logcat", "echo", "date", "whoami", "version"
 )
 
 private val STOPWORDS = setOf(

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { TerminalPanel } from "@/components/ui/TerminalPanel";
+import { StarRepo } from "@/components/sections/StarRepo";
 import { AuthorBio } from "@/components/author/AuthorBio";
 
 export const metadata: Metadata = {
@@ -77,6 +78,10 @@ export default function AboutPage() {
             ))}
           </dl>
         </div>
+      </Container>
+
+      <Container className="mt-10">
+        <StarRepo />
       </Container>
 
       <Container className="mt-16">

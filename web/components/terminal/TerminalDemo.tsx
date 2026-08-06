@@ -11,7 +11,7 @@ interface Entry {
 }
 
 const BOOT_LINES = [
-  "D.A.R.K. KERNEL v1.0.6 — Developers' Adaptive Responsive Kernel",
+  "D.A.R.K. KERNEL v1.0.7 — Developers' Adaptive Responsive Kernel",
   "decompressing launcher... ok",
   "mounting app list.... ok",
   "starting terminal service... ok",
@@ -188,7 +188,7 @@ export function TerminalDemo() {
 
         <div className="mt-1 flex items-center">
           <span className="text-[#00FF9C]">root@dark:~# </span>
-          <span className="relative">
+          <span className="relative inline-block">
             <input
               ref={inputRef}
               value={input}
@@ -199,7 +199,8 @@ export function TerminalDemo() {
               autoCapitalize="off"
               spellCheck={false}
               disabled={busy}
-              className="w-40 bg-transparent text-[#E8E8E8] caret-transparent outline-none sm:w-64 md:w-80"
+              size={Math.max(input.length, 1)}
+              className="w-auto min-w-0 bg-transparent px-0 text-[#E8E8E8] caret-transparent outline-none"
               aria-label="Terminal input"
             />
             <span

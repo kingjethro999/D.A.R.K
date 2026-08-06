@@ -38,7 +38,7 @@ export const DOCS: Doc[] = [
         type: "list",
         items: [
           "Open the Download page and tap DOWNLOAD APK.",
-          "Your browser saves dark-launcher-v1.0.6.apk (1.7 MB) to your downloads.",
+          "Your browser saves dark-launcher-v1.0.7.apk (1.7 MB) to your downloads.",
           "If Android blocks it, allow 'install unknown apps' from your browser when prompted.",
         ],
       },
@@ -180,11 +180,11 @@ export const DOCS: Doc[] = [
       },
       {
         type: "code",
-        text: "git refresh            pull GitHub stats\nlog sprint 100m 11.2s  log a workout\nstats                  weekly summary\nvault lock             encrypt the vault\nvault unlock           decrypt the vault",
+        text: "git refresh            pull GitHub stats\nlog sprint 100m 11.2s  log a workout\nstats                  weekly summary\nlock                   focus mode ON\nlock whatsapp          add whatsapp to the distract list\nunlock                 focus mode OFF\nhide telegram          hide an app (asks for the hide PIN)\nvault lock             focus mode + encrypt the AES vault\nvault unlock           focus mode off + decrypt the vault",
       },
       {
         type: "p",
-        text: "git refresh needs a GitHub personal access token, added in Settings. vault lock|unlock prompts for your PIN and uses it to derive an AES key. log stores workouts in a local Room database.",
+        text: "git refresh needs a GitHub personal access token, added in Settings. lock/unlock is focus mode: apps in the distract list are hidden from the home screen while locked, and `lock <app>` adds one. hide asks for your PIN before hiding an app. vault lock|unlock does the same focus-mode toggle and additionally encrypts/decrypts the vault directory with a PIN-derived AES key. log stores workouts in a local Room database.",
       },
       {
         type: "heading",
@@ -243,10 +243,11 @@ export const DOCS: Doc[] = [
       {
         type: "list",
         items: [
-          "Add apps to the hidden list from Settings or via `vault`.",
+          "Add apps to the hidden list from Settings or via `hide <app>`.",
           "Default PIN is 0000 — change it immediately.",
           "Changing the PIN demands the old PIN first, then new, then confirm.",
           "Hidden apps vanish from the list, search, and source launching.",
+          "`lock <app>` hides an app temporarily while focus mode is on; `unlock` brings it back.",
         ],
       },
       {

@@ -6,6 +6,40 @@ export interface DemoCommand {
   run: (args: string[]) => string[];
 }
 
+const DEMO_APPS: Record<string, { name: string; pkg: string }> = {
+  whatsapp: { name: "WhatsApp", pkg: "com.whatsapp" },
+  telegram: { name: "Telegram", pkg: "org.telegram.messenger" },
+  youtube: { name: "YouTube", pkg: "com.google.android.youtube" },
+  spotify: { name: "Spotify", pkg: "com.spotify.music" },
+  gmail: { name: "Gmail", pkg: "com.google.android.gm" },
+  maps: { name: "Maps", pkg: "com.google.android.apps.maps" },
+  camera: { name: "Camera", pkg: "com.android.camera" },
+  photos: { name: "Photos", pkg: "com.google.android.apps.photos" },
+  terminal: { name: "Termux", pkg: "com.termux" },
+  settings: { name: "D.A.R.K. Settings", pkg: "dark.internal.settings" },
+};
+
+function resolveApp(q: string): { name: string; pkg: string } | null {
+  const key = q.toLowerCase().trim();
+  if (!key) return null;
+  const exact = DEMO_APPS[key];
+  if (exact) return exact;
+  const fuzzy = Object.entries(DEMO_APPS).find(
+    ([k]) => k.startsWith(key) || key.startsWith(k) || k.includes(key)
+  );
+  return fuzzy?.[1] ?? null;
+}
+
+const state: {
+  vaultApps: Set<string>;
+  vaultLocked: boolean;
+  hidden: Set<string>;
+} = {
+  vaultApps: new Set(),
+  vaultLocked: false,
+  hidden: new Set(["com.google.android.youtube"]),
+};
+
 export const DEMO_COMMANDS: Record<string, DemoCommand> = {
   help: {
     name: "help",
@@ -26,7 +60,10 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
       "  log <type> ...     log a workout",
       "  stats              weekly fitness",
       "  git refresh        github stats",
-      "  vault lock|unlock  AES vault",
+      "  lock [app]         focus mode ON; adds app to the distract list",
+      "  unlock [app]       focus mode OFF; removes app from the distract list",
+      "  vault lock|unlock [app]  focus mode + AES file vault",
+      "  hide <app>         hide an app (asks for the hide pin)",
       "  logcat -t 20       system log",
       "  neofetch           system info",
       "  date / echo / whoami / clear",
@@ -49,7 +86,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     name: "version",
     usage: "version",
     help: "Show build info.",
-    run: () => ["D.A.R.K. 1.0.6 (build 7)  |  target sdk 35  |  min sdk 26"],
+    run: () => ["D.A.R.K. 1.0.7 (build 8)  |  target sdk 35  |  min sdk 26"],
   },
   whoami: {
     name: "whoami",
@@ -90,7 +127,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     usage: "list",
     help: "Return to the app list.",
     run: () => [
-      "apps 74 | hidden 2 | system 4",
+      `apps 74 | hidden ${state.hidden.size} | system 4`,
       "returning to app list...",
     ],
   },
@@ -102,29 +139,25 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     run: (args) => {
       if (args.length === 0)
         return ["usage: source [app name]", "e.g.  source whatsapp dual"];
-      const app = args[0].toLowerCase();
-      const apps: Record<string, string[]> = {
-        whatsapp: ["com.whatsapp", "open main messenger instance"],
-        telegram: ["org.telegram.messenger", "open telegram"],
-        youtube: ["com.google.android.youtube", "open youtube"],
-        dark: ["dark.internal.settings", "opening D.A.R.K. Settings"],
-        settings: ["dark.internal.settings", "opening D.A.R.K. Settings"],
-        terminal: ["com.termux", "open termux"],
-        browser: ["com.android.chrome", "open chrome"],
-      };
-      const hit = Object.entries(apps).find(([k]) => k.startsWith(app));
-      if (!hit)
+      const app = resolveApp(args[0]);
+      if (!app)
         return [
           `dark: no app matched '${args[0]}'`,
           "The most similar apps: whatsapp, telegram, youtube, terminal",
         ];
-      const [, lines] = hit;
-      const out: string[] = [
-        `executing binary: ${hit[0]}...`,
-        ...lines,
-      ];
-      if (args.includes("dual"))
-        out[1] += "  [dual instance]";
+      if (state.hidden.has(app.pkg))
+        return [
+          `dark: '${app.name}' is hidden - enter hide pin:`,
+          "pin: ****",
+          `executing binary: ${app.pkg}...`,
+        ];
+      const out: string[] = [`executing binary: ${app.pkg}...`];
+      out.push(
+        app.pkg === "dark.internal.settings"
+          ? "opening D.A.R.K. Settings"
+          : `open ${app.name}`
+      );
+      if (args.includes("dual")) out[1] += "  [dual instance]";
       return out;
     },
   },
@@ -211,16 +244,75 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
       ];
     },
   },
+  lock: {
+    name: "lock",
+    usage: "lock [app]",
+    help: "Focus mode ON; with an app, adds it to the distract list.",
+    run: (args) => {
+      if (args[0]) {
+        const app = resolveApp(args[0]);
+        if (!app) return [`dark: no app matched '${args[0]}'`];
+        state.vaultApps.add(app.pkg);
+        return [`'${app.name}' added to the distract list`, "FOCUS MODE ON"];
+      }
+      state.vaultLocked = true;
+      return ["FOCUS MODE ON"];
+    },
+  },
+  unlock: {
+    name: "unlock",
+    usage: "unlock [app]",
+    help: "Focus mode OFF; with an app, removes it from the distract list.",
+    run: (args) => {
+      if (args[0]) {
+        const app = resolveApp(args[0]);
+        if (!app) return [`dark: no app matched '${args[0]}'`];
+        state.vaultApps.delete(app.pkg);
+        const remaining = state.vaultApps.size;
+        if (remaining > 0)
+          return [
+            `'${app.name}' removed from the distract list`,
+            `FOCUS MODE ON (${remaining} apps still distracted)`,
+          ];
+        state.vaultLocked = false;
+        return [`'${app.name}' removed from the distract list`, "FOCUS MODE OFF"];
+      }
+      state.vaultLocked = false;
+      return ["FOCUS MODE OFF"];
+    },
+  },
+  hide: {
+    name: "hide",
+    usage: "hide <app>",
+    help: "Hide an app (asks for the hide pin).",
+    run: (args) => {
+      if (args.length === 0) return ["usage: hide [app]"];
+      const app = resolveApp(args[0]);
+      if (!app) return [`dark: no app matched '${args[0]}'`];
+      state.hidden.add(app.pkg);
+      return [
+        `'${app.name}' is being hidden - enter hide pin:`,
+        "pin: ****",
+        `hidden: ${app.pkg}`,
+      ];
+    },
+  },
   vault: {
     name: "vault",
-    usage: "vault lock|unlock",
-    help: "Lock/unlock the AES vault.",
+    usage: "vault lock|unlock [app]",
+    help: "Focus mode + AES file vault.",
     run: (args) => {
-      if (!args[0] || !["lock", "unlock"].includes(args[0]))
-        return ["usage: vault [lock|unlock]", "vault unlock requires pin:"];
-      return args[0] === "lock"
-        ? ["VAULT LOCKED (3 files encrypted)"]
-        : ["VAULT UNLOCKED (3 files decrypted)"];
+      const sub = args[0];
+      if (!sub || !["lock", "unlock"].includes(sub))
+        return ["usage: vault [lock|unlock] [app]"];
+      const rest = args.slice(1);
+      const lines = sub === "lock" ? DEMO_COMMANDS.lock.run(rest) : DEMO_COMMANDS.unlock.run(rest);
+      return [
+        sub === "lock"
+          ? "VAULT LOCKED (3 files encrypted)"
+          : "VAULT UNLOCKED (3 files decrypted)",
+        ...lines,
+      ];
     },
   },
   logcat: {
@@ -248,7 +340,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     run: () => [
       "       ▄▄▄▄▄▄▄       root@dark",
       "    ▄█████████▄     -----------------",
-      "  ▄███████████▄     OS: D.A.R.K. 1.0.6",
+      "  ▄███████████▄     OS: D.A.R.K. 1.0.7",
       "  ████████████▄     Kernel: Adaptive Responsive",
       "    ███████████     Shell: dark sh 1.0",
       "       ▀█████▀      Apps: 74",
@@ -261,19 +353,6 @@ const KNOWN = Object.values(DEMO_COMMANDS).flatMap((c) => [
   c.name,
   ...(c.aliases ?? []),
 ]);
-
-const SIMPLE_APPS = [
-  "whatsapp",
-  "telegram",
-  "youtube",
-  "spotify",
-  "gmail",
-  "maps",
-  "camera",
-  "photos",
-  "terminal",
-  "settings",
-];
 
 export interface DemoResponse {
   lines: string[];
@@ -313,14 +392,23 @@ export function runDemoCommand(raw: string): DemoResponse {
     };
   }
 
-  const app = SIMPLE_APPS.find((a) => a.startsWith(keyword));
+  const app = resolveApp(keyword);
   if (app) {
+    if (state.hidden.has(app.pkg))
+      return {
+        lines: [
+          `dark: '${app.name}' is hidden - enter hide pin:`,
+          "pin: ****",
+          `executing binary: ${app.pkg}...`,
+        ],
+        clear: false,
+      };
     return {
       lines: [
-        `executing binary: ${app}...`,
-        app === "settings"
+        `executing binary: ${app.pkg}...`,
+        app.pkg === "dark.internal.settings"
           ? "opening D.A.R.K. Settings"
-          : `open ${app}`,
+          : `open ${app.name}`,
       ],
       clear: false,
     };
@@ -360,6 +448,6 @@ export function runDemoCommand(raw: string): DemoResponse {
 export function completionsFor(prefix: string): string[] {
   const p = prefix.trim().toLowerCase();
   if (!p) return [];
-  const all = [...KNOWN, ...SIMPLE_APPS];
+  const all = [...KNOWN, ...Object.keys(DEMO_APPS)];
   return all.filter((c) => c.startsWith(p));
 }

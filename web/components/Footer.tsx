@@ -33,9 +33,17 @@ export function Footer() {
             OLED BLACK {"\u00B7"} TEXT ONLY {"\u00B7"} NO ADS {"\u00B7"} BUILT
             WITH KOTLIN {"\u00B7"} COMPOSE
           </p>
-          <p className="mt-2 font-mono text-[10px] tracking-[0.2em] text-[#2A2A2A]">
+          <p className="font-mono text-[10px] tracking-[0.2em] text-[#2A2A2A]">
             {"\u00A9"} 2026 KING JETHRO JERRY
           </p>
+          <a
+            href={APP.repository}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-[10px] tracking-[0.2em] text-[#4A4A4A] transition-colors hover:text-[#00FF9C]"
+          >
+            {"\u25B8"} github.com/kingjethro999/D.A.R.K
+          </a>
         </div>
       </Container>
     </footer>

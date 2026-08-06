@@ -12,6 +12,7 @@ export const APP = {
   sourceApk: "/dark-launcher-v1.0.6.apk",
   downloadFileName: "dark-launcher-v1.0.6.apk",
   sizeBytes: 1788007,
+  repository: "https://github.com/kingjethro999/D.A.R.K",
 } as const;
 
 export const FEATURES: Feature[] = [

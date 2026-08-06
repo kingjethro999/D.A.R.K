@@ -47,6 +47,17 @@ export default function AboutPage() {
             one person — which is exactly why everything on here is honest:
             real build history, real commands, real APK.
           </p>
+          <p className="mt-4 font-mono text-xs leading-relaxed text-[#7A7A7A]">
+            Everything is open source:{" "}
+            <a
+              href="https://github.com/kingjethro999/D.A.R.K"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#00FF9C] underline"
+            >
+              github.com/kingjethro999/D.A.R.K
+            </a>
+          </p>
         </TerminalPanel>
 
         <div>

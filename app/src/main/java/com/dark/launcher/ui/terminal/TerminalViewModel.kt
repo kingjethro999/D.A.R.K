@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dark.launcher.data.model.AppInfo
 import com.dark.launcher.data.repo.AppRepository
+import com.dark.launcher.data.repo.AskRepository
 import com.dark.launcher.data.repo.FitnessRepository
 import com.dark.launcher.data.repo.GitHubRepository
 import com.dark.launcher.data.repo.LauncherSettingsRepository
@@ -26,7 +27,8 @@ class TerminalViewModel @Inject constructor(
     private val settings: LauncherSettingsRepository,
     private val fitness: FitnessRepository,
     private val github: GitHubRepository,
-    private val vault: VaultRepository
+    private val vault: VaultRepository,
+    private val ask: AskRepository
 ) : ViewModel() {
 
     data class TerminalUiState(
@@ -75,6 +77,7 @@ class TerminalViewModel @Inject constructor(
             fitness = fitness,
             github = github,
             vault = vault,
+            ask = ask,
             onCameraPermissionRequest = { cameraPermissionRequest() },
             onPinVerify = { pinPromptRequest() }
         )

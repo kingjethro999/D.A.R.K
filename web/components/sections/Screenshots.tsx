@@ -18,7 +18,7 @@ export function Screenshots() {
         </h2>
         <div className="mt-12 grid items-start gap-10 lg:grid-cols-2">
           <PhoneRotator />
-          <div className="grid gap-8 sm:grid-cols-2">
+          <div className="hidden grid gap-8 sm:grid-cols-2 md:grid">
             {SCREENSHOTS.map((shot) => (
               <figure key={shot.src} className="group">
                 <div className="mx-auto w-fit rounded-[1.8rem] border border-[#1E1E1E] bg-[#0A0A0A] p-2">

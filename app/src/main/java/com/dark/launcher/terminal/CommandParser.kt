@@ -6,10 +6,12 @@ import android.content.Intent
 import android.hardware.camera2.CameraManager
 import android.provider.Settings
 import com.dark.launcher.data.model.AppInfo
+import com.dark.launcher.data.repo.AskRepository
 import com.dark.launcher.data.repo.FitnessRepository
 import com.dark.launcher.data.repo.GitHubRepository
 import com.dark.launcher.data.repo.LauncherSettingsRepository
 import com.dark.launcher.data.repo.VaultRepository
+import com.dark.launcher.util.FileFinder
 import com.dark.launcher.util.copyToClipboard
 import com.dark.launcher.util.launchApp
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +33,7 @@ data class TerminalDeps(
     val fitness: FitnessRepository,
     val github: GitHubRepository,
     val vault: VaultRepository,
+    val ask: AskRepository,
     val onCameraPermissionRequest: () -> Unit = {},
     val onPinVerify: suspend () -> Boolean = { false }
 )
@@ -59,6 +62,8 @@ fun executeTerminalCommand(command: String, deps: TerminalDeps): Flow<String> {
         "lock" -> vaultLockCommand(args, deps)
         "unlock" -> vaultUnlockCommand(args, deps)
         "hide" -> hideCommand(args, deps)
+        "ask" -> askCommand(args, deps)
+        "find" -> findCommand(args, deps)
         "logcat" -> ShellStream.run("logcat -d ${args.joinToString(" ")}")
         "echo" -> flowOf(args.joinToString(" "))
         "date" -> flowOf(java.text.SimpleDateFormat("EEE, MMM d yyyy HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()))
@@ -85,6 +90,8 @@ private fun buildHelpText(): String = """
       unlock [app]        focus mode OFF; with an app, removes it from the distract list
       vault lock|unlock [app]  same as lock/unlock, plus the AES file vault
       hide [app]          hide an app (asks for the hide pin)
+      ask [question]      live web search + LLM answer (Firecrawl + Groq)
+      find [query]        search every file on the device by name
       logcat [-t N]       dump system logcat
       version             show D.A.R.K. build info
       echo / date / whoami
@@ -383,6 +390,39 @@ private fun hideCommand(args: List<String>, deps: TerminalDeps): Flow<String> = 
     }
 }
 
+private fun askCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    val query = args.joinToString(" ").trim()
+    if (query.isEmpty()) {
+        emit("usage: ask [question]")
+        emit("e.g.  ask what is jetpack compose")
+        return@flow
+    }
+    emit("asking the web...")
+    try {
+        val answer = deps.ask.ask(query)
+        answer.lineSequence().forEach { emit(it) }
+    } catch (e: Exception) {
+        emit("dark: ask fault - ${e.message}")
+    }
+}.flowOn(Dispatchers.IO)
+
+private fun findCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    val query = args.joinToString(" ").trim()
+    if (query.isEmpty()) {
+        emit("usage: find [query]")
+        emit("e.g.  find my resume")
+        return@flow
+    }
+    emit("searching device for '$query'...")
+    val matches = FileFinder.search(deps.context, query)
+    if (matches.isEmpty()) {
+        emit("dark: no matches for '$query'")
+    } else {
+        emit("${matches.size} match(es):")
+        matches.forEach { emit("  $it") }
+    }
+}.flowOn(Dispatchers.IO)
+
 private fun versionCommand(deps: TerminalDeps): Flow<String> = flow {
     val info = runCatching {
         deps.context.packageManager.getPackageInfo(deps.context.packageName, 0)
@@ -397,7 +437,7 @@ private fun versionCommand(deps: TerminalDeps): Flow<String> = flow {
 private val KNOWN_COMMANDS = listOf(
     "help", "clear", "source", "open", "run", "nox", "flash", "on", "off",
     "wifi", "uuid", "b64", "json", "log", "stats", "git", "vault", "lock",
-    "unlock", "hide", "logcat", "echo", "date", "whoami", "version"
+    "unlock", "hide", "ask", "find", "logcat", "echo", "date", "whoami", "version"
 )
 
 private val STOPWORDS = setOf(

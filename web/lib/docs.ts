@@ -38,7 +38,7 @@ export const DOCS: Doc[] = [
         type: "list",
         items: [
           "Open the Download page and tap DOWNLOAD APK.",
-          "Your browser saves dark-launcher-v1.0.8.apk (1.7 MB) to your downloads.",
+          "Your browser saves dark-launcher-v1.1.1.apk (1.7 MB) to your downloads.",
           "If Android blocks it, allow 'install unknown apps' from your browser when prompted.",
         ],
       },
@@ -189,6 +189,19 @@ export const DOCS: Doc[] = [
       {
         type: "heading",
         level: 2,
+        text: "Ask & Find",
+      },
+      {
+        type: "code",
+        text: "ask what is dark matter     live web search + LLM answer\nask best pizza in lagos\nfind my resume              search every file by name\nfind tax receipt 2026",
+      },
+      {
+        type: "p",
+        text: "ask fires a Firecrawl web search, passes the best excerpts to a Groq LLM, and prints a short inline answer with sources. It needs the API keys embedded at build time via secrets.properties — without them it reports that it is offline. find walks your device storage (Download, Documents, DCIM, and beyond) and lists every path whose name matches your query, so you can locate files no matter which folder they drifted into.",
+      },
+      {
+        type: "heading",
+        level: 2,
         text: "System access",
       },
       {
@@ -282,7 +295,7 @@ export const DOCS: Doc[] = [
         rows: [
           { cols: ["GESTURE", "ACTION"], isHeader: true },
           { cols: ["Tap", "Launch the app under your finger"] },
-          { cols: ["Long-press", "Open the app menu (hide, open app info)"] },
+          { cols: ["Long-press", "Open the app menu (hide, share, app info, uninstall)"] },
           { cols: ["Double-tap", "Flip to terminal mode"] },
           { cols: ["Triple-tap", "Open the hidden apps area"] },
           { cols: ["Type", "Instant fuzzy filter of the app list"] },

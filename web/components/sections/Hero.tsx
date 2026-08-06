@@ -67,7 +67,7 @@ export function Hero() {
             ))}
           </dl>
         </div>
-        <div className="relative flex-shrink-0">
+        <div className="relative hidden flex-shrink-0 md:block">
           <Image
             src="/main.png"
             alt="D.A.R.K. app icon"

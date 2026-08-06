@@ -64,6 +64,8 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
       "  unlock [app]       focus mode OFF; removes app from the distract list",
       "  vault lock|unlock [app]  focus mode + AES file vault",
       "  hide <app>         hide an app (asks for the hide pin)",
+      "  ask <question>     live web answer (firecrawl + groq)",
+      "  find <query>       search the device for a file",
       "  logcat -t 20       system log",
       "  neofetch           system info",
       "  date / echo / whoami / clear",
@@ -86,7 +88,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     name: "version",
     usage: "version",
     help: "Show build info.",
-    run: () => ["D.A.R.K. 1.0.8 (build 9)  |  target sdk 35  |  min sdk 26"],
+    run: () => ["D.A.R.K. 1.1.1 (build 12)  |  target sdk 35  |  min sdk 26"],
   },
   whoami: {
     name: "whoami",
@@ -340,12 +342,45 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     run: () => [
       "       ▄▄▄▄▄▄▄       root@dark",
       "    ▄█████████▄     -----------------",
-      "  ▄███████████▄     OS: D.A.R.K. 1.0.8",
+      "  ▄███████████▄     OS: D.A.R.K. 1.1.1",
       "  ████████████▄     Kernel: Adaptive Responsive",
       "    ███████████     Shell: dark sh 1.0",
       "       ▀█████▀      Apps: 74",
       "        ▀▀▀▀▀▀      Uptime: 3 days, 07:42:11",
     ],
+  },
+  ask: {
+    name: "ask",
+    usage: "ask <question>",
+    help: "Live answer: Firecrawl searches the web, Groq summarizes it inline.",
+    run: (args) => {
+      const q = args.join(" ").trim();
+      if (!q) return ["usage: ask [question]", "e.g.  ask what is dark matter"];
+      return [
+        `searching the web for '${q}'...`,
+        "scraping 4 best matches (firecrawl)...",
+        "answering with groq (llama-3.3-70b-versatile)...",
+        "dark matter is the invisible mass that makes up ~27% of the universe.",
+        "It does not emit or absorb light, yet its gravity shapes galaxies and the large-scale structure of everything.",
+        "via Space.com, Wikipedia, Nasa.gov",
+      ];
+    },
+  },
+  find: {
+    name: "find",
+    usage: "find <query>",
+    help: "Search the whole device for a file by name.",
+    run: (args) => {
+      const q = args.join(" ").trim();
+      if (!q) return ["usage: find [query]", "e.g.  find my resume"];
+      return [
+        `searching device for '${q}'...`,
+        "3 match(es):",
+        "  /storage/emulated/0/Download/resume.pdf",
+        "  /storage/emulated/0/Documents/King_Resume.pdf",
+        "  /storage/emulated/0/DCIM/resume-backup.pdf",
+      ];
+    },
   },
 };
 

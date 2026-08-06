@@ -5,13 +5,13 @@ export const APP = {
   fullName: "Developers' Adaptive Responsive Kernel",
   tagline: "A minimalist text-only launcher for your Android phone.",
   packageName: "com.dark.launcher",
-  version: "1.0.8",
-  build: 9,
+  version: "1.1.1",
+  build: 12,
   minAndroid: "Android 8.0 (API 26)",
   targetSdk: 35,
-  sourceApk: "/dark-launcher-v1.0.8.apk",
-  downloadFileName: "dark-launcher-v1.0.8.apk",
-  sizeBytes: 1788007,
+  sourceApk: "/dark-launcher-v1.1.1.apk",
+  downloadFileName: "dark-launcher-v1.1.1.apk",
+  sizeBytes: 1788003,
   repository: "https://github.com/kingjethro999/D.A.R.K",
 } as const;
 
@@ -70,6 +70,24 @@ export const FEATURES: Feature[] = [
     description:
       "Pure black pixels everywhere. On an OLED display that means true blacks and near-zero battery draw.",
   },
+  {
+    tag: "LONG-PRESS",
+    title: "Long-press superpowers",
+    description:
+      "Hold an app for its quick menu: hide it from the list, share its name and link, jump to App Info, uninstall it, or launch it — no second screen needed.",
+  },
+  {
+    tag: "ASK",
+    title: "Ask D.A.R.K.",
+    description:
+      "Type `ask what is dark matter` and get a live answer. Firecrawl searches the web, Groq summarizes it, and the kernel answers you in line.",
+  },
+  {
+    tag: "FIND",
+    title: "Find any file",
+    description:
+      "`find my resume` walks your device storage and lists every match by path — the file, wherever it lives on your phone.",
+  },
 ];
 
 export const COMMANDS: CommandExample[] = [
@@ -105,6 +123,34 @@ export const COMMANDS: CommandExample[] = [
     command: "stats",
     output: ["week: 12 workouts | sprint avg 11.2s | 8,412 steps"],
     description: "Weekly fitness summary in one line.",
+  },
+  {
+    command: "ask what is dark matter",
+    output: [
+      "dark matter is an invisible mass that makes up ~27% of the universe...",
+      "(via Space.com, Wikipedia, Nasa.gov)",
+    ],
+    description: "Ask anything — Firecrawl searches the web, Groq answers inline.",
+  },
+  {
+    command: "find my resume",
+    output: [
+      "3 match(es):",
+      "  /storage/emulated/0/Download/resume.pdf",
+      "  /storage/emulated/0/Documents/King_Resume.pdf",
+      "  /storage/emulated/0/DCIM/resume-backup.pdf",
+    ],
+    description: "Search the whole device for a file by name.",
+  },
+  {
+    command: "lock",
+    output: ["screen locked", "vault pin required: OK"],
+    description: "Lock the launcher. Hidden apps re-appear after PIN unlock.",
+  },
+  {
+    command: "hide chrome",
+    output: ["chrome hidden. double-tap + long-press home to unhide."],
+    description: "Hide an app from the home screen behind the vault pin.",
   },
 ];
 

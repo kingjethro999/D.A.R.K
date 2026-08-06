@@ -21,6 +21,13 @@ android {
     val appVersionName =
         "${versionProps.getProperty("major", "1")}.${versionProps.getProperty("minor", "0")}.${versionProps.getProperty("patch", "0")}"
 
+    val secretsProps = Properties().apply {
+        val f = rootProject.file("secrets.properties")
+        if (f.exists()) f.inputStream().use { load(it) }
+    }
+    val groqApiKey = secretsProps.getProperty("GROQ_API_KEY", "")
+    val firecrawlApiKey = secretsProps.getProperty("FIRECRAWL_API_KEY", "")
+
     defaultConfig {
         applicationId = "com.dark.launcher"
         minSdk = 26
@@ -28,6 +35,8 @@ android {
         versionCode = appVersionCode
         versionName = appVersionName
         vectorDrawables { useSupportLibrary = true }
+        buildConfigField("String", "GROQ_API_KEY", "\"$groqApiKey\"")
+        buildConfigField("String", "FIRECRAWL_API_KEY", "\"$firecrawlApiKey\"")
     }
 
     buildTypes {
@@ -54,6 +63,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {

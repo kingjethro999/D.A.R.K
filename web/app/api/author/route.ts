@@ -40,19 +40,46 @@ async function searchWeb(query: string): Promise<TavilyResult[]> {
   return Array.isArray(data.results) ? data.results : [];
 }
 
-function extractJson(raw: string): string {
-  const stripped = raw.replace(/```(?:json)?|```/g, "").trim();
-  let value: unknown = null;
-  try {
-    value = JSON.parse(stripped);
-  } catch {
-    const start = stripped.indexOf("{");
-    const end = stripped.lastIndexOf("}");
-    if (start < 0 || end <= start) return stripped;
-    value = JSON.parse(stripped.slice(start, end + 1));
+function extractJson(raw: string): unknown {
+  const cleaned = raw.replace(/```json/gi, "").replace(/```/g, "").trim();
+  const tryParse = (s: string): unknown => {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return undefined;
+    }
+  };
+  const direct = tryParse(cleaned);
+  if (direct !== undefined) return direct;
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
+  if (start >= 0 && end > start) {
+    const sliced = tryParse(cleaned.slice(start, end + 1));
+    if (sliced !== undefined) return sliced;
   }
-  if (typeof value === "string") return value;
-  return JSON.stringify(value);
+  const repaired = tryParse(cleaned.replace(/,\s*([}\]])/g, "$1"));
+  if (repaired !== undefined) return repaired;
+  if (start >= 0 && end > start) {
+    const repairedSlice = tryParse(
+      cleaned.slice(start, end + 1).replace(/,\s*([}\]])/g, "$1")
+    );
+    if (repairedSlice !== undefined) return repairedSlice;
+  }
+  return null;
+}
+
+function asFacts(value: unknown, fallback: string[]): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((f): f is string => typeof f === "string").slice(0, 4);
+  }
+  if (typeof value === "string") {
+    const bullets = value
+      .split(/[\n•]+/)
+      .map((s) => s.replace(/^-\s*/, "").trim())
+      .filter((s) => s.length > 3);
+    if (bullets.length >= 1) return bullets.slice(0, 4);
+  }
+  return fallback;
 }
 
 async function askGroq(
@@ -113,12 +140,19 @@ export async function POST(req: Request) {
       },
     ]);
 
-    let parsed: Partial<AuthorPayload> = {};
-    try {
-      parsed = JSON.parse(extractJson(raw));
-    } catch {
-      parsed = { summary: raw };
-    }
+    const extracted = extractJson(raw);
+    const parsed: Partial<AuthorPayload> =
+      extracted !== null && typeof extracted === "object"
+        ? (extracted as Partial<AuthorPayload>)
+        : {};
+    const summary =
+      parsed.summary && typeof parsed.summary === "string" && parsed.summary.trim()
+        ? parsed.summary.trim()
+        : "No reliable public write-up was found in the sources searched. The details below are best-effort from the web.";
+    const headline =
+      parsed.headline && typeof parsed.headline === "string" && parsed.headline.trim()
+        ? parsed.headline.trim()
+        : "Developer, tinkerer, builder of dumb-fast software.";
 
     const sources = results
       .filter((r) => r.title && r.url)
@@ -127,13 +161,11 @@ export async function POST(req: Request) {
 
     const payload: AuthorPayload = {
       name: query,
-      headline: parsed.headline ?? "Developer, tinkerer, builder of dumb-fast software.",
-      summary:
-        parsed.summary ??
-        "No reliable public write-up was found in the sources searched. The details below are best-effort from the web.",
-      facts: Array.isArray(parsed.facts)
-        ? parsed.facts.slice(0, 4)
-        : ["Built D.A.R.K., a minimalist text-only Android launcher."],
+      headline,
+      summary,
+      facts: asFacts(parsed.facts, [
+        "Built D.A.R.K., a minimalist text-only Android launcher.",
+      ]),
       sources,
       truncated: results.length === 0,
     };

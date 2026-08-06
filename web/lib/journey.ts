@@ -117,7 +117,21 @@ export const JOURNEY: JourneyChapter[] = [
       "GitHub release with the build artifact attached",
     ],
   },
+  {
+    version: "v1.1.1",
+    codename: "ASK & FIND",
+    date: "AUG 2026",
+    blurb:
+      "The knowledge pass. D.A.R.K. can now answer questions and find files. `ask` runs a live Firecrawl web search and has a Groq LLM summarize it inline — your own keys are embedded at build time. `find` walks the device's storage (MediaStore + the filesystem) and lists every file that matches. Long-press on any app gains hide/share/App Info/uninstall, and this website got a mobile pass.",
+    points: [
+      "ask <question> — Firecrawl search + Groq answer, keys from gitignored secrets.properties",
+      "find <query> — MediaStore + filesystem walk lists every matching path on the device",
+      "Both commands mirrored in the web terminal demo",
+      "Long-press app menu — hide, share, app info, uninstall, launch",
+      "Website: author bio no longer leaks raw JSON, footer + hero + screenshots fixed on mobile",
+    ],
+  },
 ];
 
-export const CURRENT_RELEASE = "1.0.8";
-export const CURRENT_BUILD = 9;
+export const CURRENT_RELEASE = "1.1.1";
+export const CURRENT_BUILD = 12;

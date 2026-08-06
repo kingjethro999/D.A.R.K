@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">D.A.R.K.</string>
+    <string name="accessibility_service_label">D.A.R.K. Screen Lock</string>
+    <string name="accessibility_service_description">Allows D.A.R.K. to lock the screen when you double-tap the home screen.</string>
+</resources>

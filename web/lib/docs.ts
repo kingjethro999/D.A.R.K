@@ -38,7 +38,7 @@ export const DOCS: Doc[] = [
         type: "list",
         items: [
           "Open the Download page and tap DOWNLOAD APK.",
-          "Your browser saves dark-launcher-v1.0.7.apk (1.7 MB) to your downloads.",
+          "Your browser saves dark-launcher-v1.0.8.apk (1.7 MB) to your downloads.",
           "If Android blocks it, allow 'install unknown apps' from your browser when prompted.",
         ],
       },

@@ -86,7 +86,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     name: "version",
     usage: "version",
     help: "Show build info.",
-    run: () => ["D.A.R.K. 1.0.7 (build 8)  |  target sdk 35  |  min sdk 26"],
+    run: () => ["D.A.R.K. 1.0.8 (build 9)  |  target sdk 35  |  min sdk 26"],
   },
   whoami: {
     name: "whoami",
@@ -340,7 +340,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     run: () => [
       "       ▄▄▄▄▄▄▄       root@dark",
       "    ▄█████████▄     -----------------",
-      "  ▄███████████▄     OS: D.A.R.K. 1.0.7",
+      "  ▄███████████▄     OS: D.A.R.K. 1.0.8",
       "  ████████████▄     Kernel: Adaptive Responsive",
       "    ███████████     Shell: dark sh 1.0",
       "       ▀█████▀      Apps: 74",

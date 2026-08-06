@@ -103,20 +103,21 @@ export const JOURNEY: JourneyChapter[] = [
     ],
   },
   {
-    version: "v1.0.7",
+    version: "v1.0.8",
     codename: "FOCUS & RELEASE",
     date: "AUG 2026",
     blurb:
-      "The focus pass. lock/unlock and hide became terminal commands, `hide <app>` asks for the PIN, and the prompt/cursor spacing bug was fixed on both the app and the web demo. Shrunk to 1.7MB, signed and released. This is the build on this website.",
+      "The focus pass. lock/unlock and hide became terminal commands, `hide <app>` asks for the PIN, and the prompt/cursor spacing bug was fixed on both the app and the web demo. Shrunk to 1.7MB, signed, and shipped as a GitHub release with the APK attached. This is the build on this website.",
     points: [
       "Clock flow decoupled — home screen no longer recomposes every minute",
       "App label cache — zero PackageManager lookups on the hot path",
       "R8 minify + resource shrink on the release variant",
       "Signed release APK — side-loadable, no Play Store, no ads, no tracking",
       "version.properties auto-increments patch + versionCode on every build",
+      "GitHub release with the build artifact attached",
     ],
   },
 ];
 
-export const CURRENT_RELEASE = "1.0.7";
-export const CURRENT_BUILD = 8;
+export const CURRENT_RELEASE = "1.0.8";
+export const CURRENT_BUILD = 9;

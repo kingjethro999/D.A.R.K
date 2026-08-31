@@ -9,15 +9,15 @@ import { APP } from "@/lib/app";
 export const metadata: Metadata = {
   title: "Download — D.A.R.K.",
   description:
-    "Download D.A.R.K. v1.1.1 — a 1.7 MB signed APK. No Play Store, no ads, no tracking. Side-loadable on Android 8.0+.",
+    `Download D.A.R.K. v${APP.version} — a 2.8 MB signed APK. No Play Store, no ads, no tracking. Side-loadable on Android 8.0+.`,
 };
 
-const APK_SHA256 = "5b9f906b0094866de0cd0c1c491bb5bb783e2e196c47fb4ac2ccc9bc60b7d09c";
+const APK_SHA256 = "da68aa3ff33b8e500523e106e261674f6936c3823d6515cf3541f9b96a49f7a2";
 
 const REQUIREMENTS = [
   { k: "ANDROID", v: "8.0 (API 26) or newer" },
   { k: "TARGET", v: "SDK 35" },
-  { k: "SIZE", v: "1.7 MB" },
+  { k: "SIZE", v: "2.8 MB" },
   { k: "SIGNED", v: "Yes — release build" },
   { k: "STORE", v: "None — direct APK" },
   { k: "ADS", v: "Zero" },
@@ -42,7 +42,7 @@ const STEPS = [
   {
     step: "04",
     title: "Set home",
-    text: "Press Home, pick D.A.R.K., tap Always. Double-tap the screen to open the terminal.",
+    text: "Press Home, pick D.A.R.K., tap Always. Your apps live in the list; Terminal, Recorder and Settings sit in the bottom bar.",
   },
 ] as const;
 
@@ -52,7 +52,7 @@ export default function DownloadPage() {
       <PageHeader
         index="DOWNLOAD"
         title="GET THE APK"
-        subtitle="One signed file, 1.7 megabytes, no Play Store in the chain. Side-load it on any Android 8.0+ device and your home screen becomes a terminal."
+        subtitle="One signed file, 2.8 megabytes, no Play Store in the chain. Side-load it on any Android 8.0+ device and your home screen becomes a terminal."
       />
 
       <Container className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">

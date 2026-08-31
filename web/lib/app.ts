@@ -5,13 +5,13 @@ export const APP = {
   fullName: "Developers' Adaptive Responsive Kernel",
   tagline: "A minimalist text-only launcher for your Android phone.",
   packageName: "com.dark.launcher",
-  version: "1.1.1",
-  build: 12,
+  version: "2.2.0",
+  build: 33,
   minAndroid: "Android 8.0 (API 26)",
   targetSdk: 35,
-  sourceApk: "/dark-launcher-v1.1.1.apk",
-  downloadFileName: "dark-launcher-v1.1.1.apk",
-  sizeBytes: 1788003,
+  sourceApk: "/dark-launcher-v2.2.0.apk",
+  downloadFileName: "dark-launcher-v2.2.0.apk",
+  sizeBytes: 2825912,
   repository: "https://github.com/kingjethro999/D.A.R.K",
 } as const;
 
@@ -35,10 +35,16 @@ export const FEATURES: Feature[] = [
       "A launcher whose only job is to get out of your way. Every frame is cheap, so the home screen never lags.",
   },
   {
+    tag: "BOTTOM NAV",
+    title: "Persistent bottom bar",
+    description:
+      "Home, Settings, Terminal and Recorder live in a floating bar. Scroll it to reach a full-width now-playing display and your live step count.",
+  },
+  {
     tag: "GESTURES",
     title: "Gesture driven",
     description:
-      "Double-tap to lock. Triple-tap for hidden apps. Multi-finger swipes for anything you want.",
+      "Double-tap to lock the screen instantly via Device Admin. Triple-tap for hidden apps. Multi-finger swipes for anything you want.",
   },
   {
     tag: "SEARCH",
@@ -47,16 +53,22 @@ export const FEATURES: Feature[] = [
       "Type a few letters and the list filters itself. Multi-token search across app names and packages.",
   },
   {
-    tag: "MUSIC",
-    title: "Now playing, always",
+    tag: "RECORDER",
+    title: "Screen recorder overlay",
     description:
-      "The track currently in your ears scrolls across the top of the home screen via notification access.",
+      "A floating bubble docks to your screen edge. Tap it for a radial record menu, watch a 3-2-1 countdown, then save, share, or hand the clip to CapCut.",
+  },
+  {
+    tag: "MUSIC",
+    title: "Now playing in the bar",
+    description:
+      "The track currently in your ears fills the bottom bar's music display. Too long? It scrolls like a marquee. Nothing playing? It tells you so.",
   },
   {
     tag: "STEPS",
-    title: "Fitness at a glance",
+    title: "Step count in the bar",
     description:
-      "Daily steps, weekly workouts and sprint averages counted straight from your phone's motion sensor.",
+      "A live step pill sits at the end of the nav — counted straight from your phone's motion sensor, sized down as the digits grow.",
   },
   {
     tag: "VAULT",
@@ -74,7 +86,7 @@ export const FEATURES: Feature[] = [
     tag: "LONG-PRESS",
     title: "Long-press superpowers",
     description:
-      "Hold an app for its quick menu: hide it from the list, share its name and link, jump to App Info, uninstall it, or launch it — no second screen needed.",
+      "Hold an app for its quick menu: hide it, copy its package name, add it to the distract list, share, uninstall, or jump to App Info.",
   },
   {
     tag: "ASK",
@@ -87,6 +99,24 @@ export const FEATURES: Feature[] = [
     title: "Find any file",
     description:
       "`find my resume` walks your device storage and lists every match by path — the file, wherever it lives on your phone.",
+  },
+  {
+    tag: "PROFILES",
+    title: "Focus profiles",
+    description:
+      "Switch between Normal, Work, and Night modes from Settings or `mode work` in the terminal. Distract apps hide automatically.",
+  },
+  {
+    tag: "WIDGETS",
+    title: "Ambient widget strip",
+    description:
+      "Battery, next alarm, and unread count appear as a monospace line under the clock — still text, still black.",
+  },
+  {
+    tag: "BACKUP",
+    title: "Config backup",
+    description:
+      "Export hidden apps, gestures, vault config, and terminal aliases to an encrypted JSON file. Restore on reinstall.",
   },
 ];
 
@@ -146,6 +176,21 @@ export const COMMANDS: CommandExample[] = [
     command: "lock",
     output: ["screen locked", "vault pin required: OK"],
     description: "Lock the launcher. Hidden apps re-appear after PIN unlock.",
+  },
+  {
+    command: "rec start",
+    output: ["starting recorder — grant screen capture when prompted"],
+    description: "Start the screen recorder overlay from the terminal.",
+  },
+  {
+    command: "mode work",
+    output: ["profile set to Work", "FOCUS MODE ON — distract apps hidden"],
+    description: "Switch focus profile without opening Settings.",
+  },
+  {
+    command: "steps",
+    output: ["4,218 steps today (source: sensor)"],
+    description: "Print today's step count from the bottom bar sensor.",
   },
   {
     command: "hide chrome",

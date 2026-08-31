@@ -131,7 +131,54 @@ export const JOURNEY: JourneyChapter[] = [
       "Website: author bio no longer leaks raw JSON, footer + hero + screenshots fixed on mobile",
     ],
   },
+  {
+    version: "v2.0.0",
+    codename: "THE BAR",
+    date: "AUG 2026",
+    blurb:
+      "The interface rewrite. The home screen is now three things, not two: the header, the app list, and a persistent bottom bar. Settings and the terminal moved out of the app list into that bar, and media finally found a home — the bar becomes a full-width now-playing display you scroll to, with marquee scrolling for long titles.",
+    points: [
+      "Persistent bottom bar: Home · Settings · Terminal · Recorder, plus a live step pill",
+      "Settings is a real screen, no longer a fake entry injected into the app list",
+      "Terminal is a bottom-bar destination, not a double-tap flip",
+      "Now playing fills the bar's music display — scroll the nav to reach it",
+      "Long titles marquee-scroll; 'no media playing' shown when idle",
+      "Steps live in the bar, sized down as the count grows",
+    ],
+  },
+  {
+    version: "v2.0.8",
+    codename: "THE RECORDER",
+    date: "AUG 2026",
+    blurb:
+      "The capture pass. A screen recorder floats above your apps: an edge bubble that fans open into a radial menu, a 3-2-1 countdown, and MP4 saved to a gallery with share, play and a direct route into CapCut for editing. Groq keys no longer ship in the build — they were removed, the published APK was swapped for a clean one, and the API key was banned and regenerated.",
+    points: [
+      "Screen recorder bubble docks to the screen edge and stays out of the way",
+      "Radial record menu — tap the bubble, spin to Record, hit it again to stop",
+      "3-2-1 countdown overlay before capture begins",
+      "MP4 lands in a library with play, share and open-in-CapCut",
+      "Embedded Groq key purged from the codebase and the published APK",
+    ],
+  },
+  {
+    version: "v2.2.0",
+    codename: "THE OVERHAUL",
+    date: "AUG 2026",
+    blurb:
+      "The everything pass. Screen recorder rebuilt XRecorder-style — orange edge bubble, full-screen countdown, radial controls, post-recording sheet with thumbnail. Plus setup checklist, focus profiles, widget strip, terminal aliases, config backup, and user-configurable API keys.",
+    points: [
+      "Recorder overlay redesigned: orange semi-circle bubble, trigonometric radial menu, live timer",
+      "Recordings auto-export to Gallery/Movies/DARK; post-sheet with Delete, Edit, Trim, Share",
+      "First-run setup checklist: PIN, overlay, notifications, steps, device admin",
+      "Terminal: rec, steps, now, mode, alias, backup, apps --hidden",
+      "Profile modes: Normal, Work (vault lock), Night (phone & messages only)",
+      "Widget strip: battery, alarm, unread notifications on home",
+      "Recent apps bubble to top of search; long-press: copy package, add to distract list",
+      "Ask D.A.R.K. keys configurable in Settings — no rebuild required",
+      "Room migrations preserve workout history; CommandParser unit tests added",
+    ],
+  },
 ];
 
-export const CURRENT_RELEASE = "1.1.1";
-export const CURRENT_BUILD = 12;
+export const CURRENT_RELEASE = "2.2.0";
+export const CURRENT_BUILD = 33;

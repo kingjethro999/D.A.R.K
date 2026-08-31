@@ -6,11 +6,17 @@ import android.content.Intent
 import android.hardware.camera2.CameraManager
 import android.provider.Settings
 import com.dark.launcher.data.model.AppInfo
+import com.dark.launcher.data.repo.AliasRepository
 import com.dark.launcher.data.repo.AskRepository
+import com.dark.launcher.data.repo.BackupRepository
 import com.dark.launcher.data.repo.FitnessRepository
 import com.dark.launcher.data.repo.GitHubRepository
 import com.dark.launcher.data.repo.LauncherSettingsRepository
+import com.dark.launcher.data.repo.MediaRepository
+import com.dark.launcher.data.repo.ProfileMode
+import com.dark.launcher.data.repo.StepSensorRepository
 import com.dark.launcher.data.repo.VaultRepository
+import com.dark.launcher.service.RecordOverlayService
 import com.dark.launcher.util.FileFinder
 import com.dark.launcher.util.copyToClipboard
 import com.dark.launcher.util.launchApp
@@ -34,11 +40,33 @@ data class TerminalDeps(
     val github: GitHubRepository,
     val vault: VaultRepository,
     val ask: AskRepository,
+    val aliases: AliasRepository? = null,
+    val backup: BackupRepository? = null,
+    val media: MediaRepository? = null,
+    val steps: StepSensorRepository? = null,
     val onCameraPermissionRequest: () -> Unit = {},
-    val onPinVerify: suspend () -> Boolean = { false }
+    val onPinVerify: suspend () -> Boolean = { false },
+    val onOpenSetup: () -> Unit = {}
 )
 
-fun executeTerminalCommand(command: String, deps: TerminalDeps): Flow<String> {
+suspend fun resolveCommandInput(command: String, deps: TerminalDeps): String {
+    val trimmed = command.trim()
+    if (trimmed.isEmpty()) return trimmed
+    val aliasName = trimmed.split("\\s+".toRegex()).first().lowercase()
+    return deps.aliases?.resolve(aliasName)?.let { resolved ->
+        if (trimmed.contains(" ")) {
+            val rest = trimmed.substringAfter(" ")
+            "$resolved $rest".trim()
+        } else resolved
+    } ?: trimmed
+}
+
+fun executeTerminalCommand(command: String, deps: TerminalDeps): Flow<String> = flow {
+    val resolved = resolveCommandInput(command, deps)
+    executeTerminalCommandResolved(resolved, deps).collect { emit(it) }
+}
+
+private fun executeTerminalCommandResolved(command: String, deps: TerminalDeps): Flow<String> {
     val tokens = command.trim().lowercase().split("\\s+".toRegex())
     if (tokens.isEmpty() || tokens[0].isBlank()) return flowOf("")
 
@@ -69,6 +97,14 @@ fun executeTerminalCommand(command: String, deps: TerminalDeps): Flow<String> {
         "date" -> flowOf(java.text.SimpleDateFormat("EEE, MMM d yyyy HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()))
         "whoami" -> flowOf("root")
         "version" -> versionCommand(deps)
+        "rec", "record" -> recCommand(args, deps)
+        "steps" -> stepsCommand(deps)
+        "now" -> nowCommand(deps)
+        "apps" -> appsCommand(args, deps)
+        "mode" -> modeCommand(args, deps)
+        "alias" -> aliasCommand(args, deps)
+        "backup" -> backupCommand(args, deps)
+        "setup" -> setupCommand(deps)
         else -> handleUnknown(command, deps)
     }
 }
@@ -92,6 +128,14 @@ private fun buildHelpText(): String = """
       hide [app]          hide an app (asks for the hide pin)
       ask [question]      live web search + LLM answer (Firecrawl + Groq)
       find [query]        search every file on the device by name
+      rec start|stop|status   control screen recorder overlay
+      steps               today's step count
+      now                 currently playing track
+      apps --hidden       list hidden apps (requires pin)
+      mode normal|work|night   switch focus profile
+      alias name = cmd    save a terminal alias
+      backup export|import   backup or restore launcher config
+      setup               open the setup checklist
       logcat [-t N]       dump system logcat
       version             show D.A.R.K. build info
       echo / date / whoami
@@ -423,6 +467,152 @@ private fun findCommand(args: List<String>, deps: TerminalDeps): Flow<String> = 
     }
 }.flowOn(Dispatchers.IO)
 
+private fun recCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    val sub = args.firstOrNull() ?: "status"
+    when (sub) {
+        "start" -> {
+            if (RecordOverlayService.isRecording) {
+                emit("already recording")
+            } else {
+                RecordOverlayService.requestRecording(deps.context)
+                emit("starting recorder — grant screen capture when prompted")
+            }
+        }
+        "stop" -> {
+            if (RecordOverlayService.isRecording) {
+                deps.context.startService(
+                    android.content.Intent(deps.context, RecordOverlayService::class.java).apply {
+                        action = RecordOverlayService.ACTION_STOP_RECORDING
+                    }
+                )
+                emit("stopping recording...")
+            } else {
+                emit("not currently recording")
+            }
+        }
+        "status" -> {
+            val running = RecordOverlayService.isRunning
+            val rec = RecordOverlayService.isRecording
+            emit("overlay: ${if (running) "active" else "off"} | recording: ${if (rec) "yes" else "no"}")
+        }
+        else -> emit("usage: rec start|stop|status")
+    }
+}
+
+private fun stepsCommand(deps: TerminalDeps): Flow<String> = flow {
+    val count = deps.steps?.todaySteps?.value ?: 0
+    val source = deps.settings.stepsSourceFlow.first()
+    emit("$count steps today (source: ${source.id})")
+}
+
+private fun nowCommand(deps: TerminalDeps): Flow<String> = flow {
+    val track = deps.media?.nowPlaying?.value
+    if (track == null) {
+        emit("no media playing")
+    } else {
+        val artist = track.artist?.let { " — $it" }.orEmpty()
+        val app = track.appName?.let { " [$it]" }.orEmpty()
+        emit("${track.title}$artist$app")
+    }
+}
+
+private fun appsCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    if (args.isEmpty() || args[0] != "--hidden") {
+        emit("usage: apps --hidden")
+        return@flow
+    }
+    emit("enter hide pin to list hidden apps:")
+    val ok = deps.onPinVerify()
+    if (!ok) {
+        emit("dark: access denied")
+        return@flow
+    }
+    val hidden = deps.settings.hiddenAppsFlow.first()
+    if (hidden.isEmpty()) {
+        emit("no hidden apps")
+    } else {
+        emit("${hidden.size} hidden app(s):")
+        hidden.forEach { pkg ->
+            val name = deps.apps.find { it.packageName == pkg }?.name ?: pkg
+            emit("  $name ($pkg)")
+        }
+    }
+}
+
+private fun modeCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    if (args.isEmpty()) {
+        val current = deps.settings.profileModeFlow.first()
+        emit("mode: ${current.id} (${current.label})")
+        emit("usage: mode normal|work|night")
+        return@flow
+    }
+    val mode = ProfileMode.fromId(args[0])
+    deps.settings.applyProfileMode(mode)
+    emit("profile set to ${mode.label}")
+    when (mode) {
+        ProfileMode.WORK -> emit("FOCUS MODE ON — distract apps hidden")
+        ProfileMode.NIGHT -> emit("NIGHT MODE — only phone & messages visible")
+        ProfileMode.NORMAL -> emit("NORMAL MODE — all apps visible")
+    }
+}.flowOn(Dispatchers.IO)
+
+private fun aliasCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    val repo = deps.aliases
+    if (repo == null) {
+        emit("dark: aliases unavailable")
+        return@flow
+    }
+    val raw = args.joinToString(" ").trim()
+    if (raw.isEmpty()) {
+        val all = repo.all()
+        if (all.isEmpty()) emit("no aliases saved") else {
+            emit("${all.size} alias(es):")
+            all.forEach { (k, v) -> emit("  $k = $v") }
+        }
+        return@flow
+    }
+    if (raw.contains("=")) {
+        val parts = raw.split("=", limit = 2)
+        val name = parts[0].trim()
+        val cmd = parts.getOrNull(1)?.trim().orEmpty()
+        if (name.isBlank() || cmd.isBlank()) {
+            emit("usage: alias name = command")
+            return@flow
+        }
+        repo.setAlias(name, cmd)
+        emit("alias saved: $name = $cmd")
+    } else if (raw.startsWith("rm ")) {
+        repo.removeAlias(raw.removePrefix("rm ").trim())
+        emit("alias removed")
+    } else {
+        emit("usage: alias name = command | alias rm name")
+    }
+}.flowOn(Dispatchers.IO)
+
+private fun backupCommand(args: List<String>, deps: TerminalDeps): Flow<String> = flow {
+    val repo = deps.backup
+    if (repo == null) {
+        emit("dark: backup unavailable")
+        return@flow
+    }
+    when (args.firstOrNull()) {
+        "export" -> {
+            val file = repo.exportToFile()
+            emit("backup exported: ${file.absolutePath}")
+        }
+        "import" -> {
+            emit("usage: paste backup JSON in Settings > Backup, or place file at:")
+            emit("  ${deps.context.getExternalFilesDir(null)?.path}/backup/")
+        }
+        else -> emit("usage: backup export|import")
+    }
+}.flowOn(Dispatchers.IO)
+
+private fun setupCommand(deps: TerminalDeps): Flow<String> = flow {
+    deps.onOpenSetup()
+    emit("opening setup checklist...")
+}
+
 private fun versionCommand(deps: TerminalDeps): Flow<String> = flow {
     val info = runCatching {
         deps.context.packageManager.getPackageInfo(deps.context.packageName, 0)
@@ -437,7 +627,8 @@ private fun versionCommand(deps: TerminalDeps): Flow<String> = flow {
 private val KNOWN_COMMANDS = listOf(
     "help", "clear", "source", "open", "run", "nox", "flash", "on", "off",
     "wifi", "uuid", "b64", "json", "log", "stats", "git", "vault", "lock",
-    "unlock", "hide", "ask", "find", "logcat", "echo", "date", "whoami", "version"
+    "unlock", "hide", "ask", "find", "logcat", "echo", "date", "whoami", "version",
+    "rec", "record", "steps", "now", "apps", "mode", "alias", "backup", "setup"
 )
 
 private val STOPWORDS = setOf(

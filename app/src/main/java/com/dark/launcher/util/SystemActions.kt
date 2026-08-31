@@ -1,7 +1,9 @@
 package com.dark.launcher.util
 
+import android.app.admin.DevicePolicyManager
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
@@ -9,6 +11,7 @@ import android.net.Uri
 import android.os.Process
 import android.provider.Settings
 import com.dark.launcher.data.model.AppInfo
+import com.dark.launcher.service.DarkDeviceAdminReceiver
 import com.dark.launcher.service.LauncherAccessibilityService
 
 fun launchApp(context: Context, packageName: String) {
@@ -67,8 +70,46 @@ fun copyToClipboard(context: Context, label: String, text: String) {
 }
 
 fun requestLockScreen(context: Context) {
+    val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+    val admin = ComponentName(context, DarkDeviceAdminReceiver::class.java)
+    if (dpm.isAdminActive(admin)) {
+        runCatching { dpm.lockNow() }
+        return
+    }
     val intent = Intent(LauncherAccessibilityService.ACTION_LOCK_SCREEN).apply {
         setPackage(context.packageName)
     }
     context.sendBroadcast(intent)
 }
+
+fun isDeviceAdminActive(context: Context): Boolean {
+    val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+    return dpm.isAdminActive(ComponentName(context, DarkDeviceAdminReceiver::class.java))
+}
+
+fun isLockAccessibilityEnabled(context: Context): Boolean {
+    val expected = ComponentName(context, LauncherAccessibilityService::class.java)
+    val enabled = Settings.Secure.getString(
+        context.contentResolver,
+        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+    ) ?: return false
+    val splitter = android.text.TextUtils.SimpleStringSplitter(':')
+    splitter.setString(enabled)
+    while (splitter.hasNext()) {
+        val name = ComponentName.unflattenFromString(splitter.next())
+        if (name == expected) return true
+    }
+    return false
+}
+
+fun isLockReady(context: Context): Boolean =
+    isDeviceAdminActive(context) || isLockAccessibilityEnabled(context)
+
+fun deviceAdminEnableIntent(context: Context): Intent =
+    Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+        putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, ComponentName(context, DarkDeviceAdminReceiver::class.java))
+        putExtra(
+            DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+            "D.A.R.K. uses device admin to lock the screen instantly from home gestures and the lock command."
+        )
+    }

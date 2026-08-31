@@ -3,4 +3,8 @@
     <string name="app_name">D.A.R.K.</string>
     <string name="accessibility_service_label">D.A.R.K. Screen Lock</string>
     <string name="accessibility_service_description">Allows D.A.R.K. to lock the screen when you double-tap the home screen.</string>
+    <string name="device_admin_label">D.A.R.K. Screen Lock</string>
+    <string name="device_admin_description">Lets D.A.R.K. lock the screen instantly from home gestures and the lock command.</string>
+    <string name="recorder_channel_name">Screen Recorder</string>
+    <string name="recorder_channel_description">Floating bubble, screen capture and recording notifications.</string>
 </resources>

@@ -43,7 +43,21 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("debug")
+            val keystoreProps = Properties().apply {
+                val f = rootProject.file("keystore.properties")
+                if (f.exists()) f.inputStream().use { load(it) }
+            }
+            if (keystoreProps.isNotEmpty()) {
+                signingConfigs.create("release") {
+                    storeFile = file(keystoreProps.getProperty("storeFile"))
+                    storePassword = keystoreProps.getProperty("storePassword")
+                    keyAlias = keystoreProps.getProperty("keyAlias")
+                    keyPassword = keystoreProps.getProperty("keyPassword")
+                }
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                signingConfig = signingConfigs.getByName("debug")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -103,4 +117,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.health.connect.client)
+
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation("io.mockk:mockk:1.13.12")
 }

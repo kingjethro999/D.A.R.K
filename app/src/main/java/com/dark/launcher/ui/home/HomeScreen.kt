@@ -71,8 +71,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dark.launcher.R
 import com.dark.launcher.data.model.AppInfo
+import com.dark.launcher.ui.components.NotificationShadeOverlay
+import com.dark.launcher.ui.components.WidgetStrip
 import com.dark.launcher.util.launchApp
 import com.dark.launcher.util.requestLockScreen
+import com.dark.launcher.util.isLockReady
+import com.dark.launcher.util.deviceAdminEnableIntent
 import com.dark.launcher.ui.theme.Amber
 import com.dark.launcher.ui.theme.TerminalGreen
 import com.dark.launcher.ui.theme.Gray
@@ -88,10 +92,14 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onOpenSettings: () -> Unit,
     onOpenTerminal: () -> Unit,
-    onOpenHidden: () -> Unit
+    onOpenHidden: () -> Unit,
+    onOpenSetup: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val clock by viewModel.clock.collectAsStateWithLifecycle()
+    val widgetInfo by viewModel.widgetInfo.collectAsStateWithLifecycle()
+    val shadeNotifications by viewModel.shadeNotifications.collectAsStateWithLifecycle()
+    val showShade by viewModel.showShade.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
 
@@ -134,7 +142,7 @@ fun HomeScreen(
         when (gesture) {
             state.hiddenGesture -> showPinDialog = true
             state.lockGesture -> {
-                if (viewModel.isLockEnabled()) {
+                if (isLockReady(context)) {
                     requestLockScreen(context)
                 } else {
                     showLockDialog = true
@@ -266,14 +274,14 @@ fun HomeScreen(
             )
         }
 
+        val fitnessLine = buildFitnessLine(state.fitness)
         AnimatedVisibility(
-            visible = state.showFitness &&
-                (state.fitness.stepsToday > 0 || state.fitness.workouts > 0 || state.fitness.sprintAvg != null),
+            visible = state.showFitness && fitnessLine.isNotEmpty(),
             enter = slideInVertically(spring<IntOffset>()) + fadeIn(),
             exit = slideOutVertically(spring<IntOffset>()) + fadeOut()
         ) {
             Text(
-                text = buildFitnessLine(state.fitness),
+                text = fitnessLine,
                 fontFamily = FontFamily.Monospace,
                 color = TerminalGreen.copy(alpha = 0.6f),
                 fontSize = 11.sp,
@@ -282,25 +290,40 @@ fun HomeScreen(
             )
         }
 
-        AnimatedVisibility(
-            visible = state.nowPlaying != null,
-            enter = slideInVertically(spring<IntOffset>()) + fadeIn(),
-            exit = slideOutVertically(spring<IntOffset>()) + fadeOut()
-        ) {
-            val np = state.nowPlaying ?: return@AnimatedVisibility
+        if (state.modeFilters && state.modeName.isNotBlank()) {
             Text(
-                text = "> \u266A ${np.title}${np.artist?.let { " - $it" } ?: ""}",
+                text = "> MODE: ${state.modeName.uppercase()}",
                 fontFamily = FontFamily.Monospace,
-                color = Amber.copy(alpha = 0.9f),
+                color = Amber,
                 fontSize = 11.sp,
                 letterSpacing = 1.sp,
-                maxLines = 1,
-                softWrap = false,
                 modifier = Modifier.padding(top = 6.dp)
             )
         }
 
-        Spacer(Modifier.height(20.dp))
+        AnimatedVisibility(
+            visible = state.showWidgets,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            WidgetStrip(
+                info = widgetInfo,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+        }
+
+        AnimatedVisibility(
+            visible = showShade,
+            enter = slideInVertically { -it } + fadeIn(),
+            exit = slideOutVertically { -it } + fadeOut()
+        ) {
+            NotificationShadeOverlay(
+                notifications = shadeNotifications,
+                onDismiss = { viewModel.dismissShade() }
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
 
         SearchField(
             query = query,
@@ -315,17 +338,15 @@ fun HomeScreen(
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             items(state.apps, key = { it.packageName + "_" + it.user }) { app ->
                 AppRow(
                     app = app,
                     onClick = {
-                        when (app.packageName) {
-                            AppInfo.INTERNAL_SETTINGS -> onOpenSettings()
-                            AppInfo.INTERNAL_TERMINAL -> onOpenTerminal()
-                            else -> launchApp(context, app)
-                        }
+                        viewModel.recordLaunch(app.packageName)
+                        launchApp(context, app)
                     },
                     onLongClick = { selectedApp = app }
                 )
@@ -337,7 +358,8 @@ fun HomeScreen(
         AppMenuDialog(
             app = app,
             onDismiss = { selectedApp = null },
-            onHide = { viewModel.hideApp(it) }
+            onHide = { viewModel.hideApp(it) },
+            onAddToDistract = { viewModel.addToDistractList(it) }
         )
     }
 
@@ -349,7 +371,8 @@ fun HomeScreen(
             onSuccess = {
                 showPinDialog = false
                 onOpenHidden()
-            }
+            },
+            showDefaultHint = !state.pinChanged
         )
     }
 
@@ -361,18 +384,23 @@ fun HomeScreen(
             textContentColor = MaterialTheme.colorScheme.onSurface,
             title = { Text("Screen Lock") },
             text = {
-                Text("Double-tap lock needs Accessibility permission. Enable it in system settings to lock the screen from the home screen.")
+                Text("D.A.R.K. locks the screen via Device Admin (recommended, instant) or Accessibility. Enable one below.")
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showLockDialog = false
-                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                        runCatching { context.startActivity(deviceAdminEnableIntent(context)) }
                     }
-                ) { Text("Go to Settings", color = TerminalGreen) }
+                ) { Text("Device Admin", color = TerminalGreen) }
             },
             dismissButton = {
-                TextButton(onClick = { showLockDialog = false }) { Text("Cancel") }
+                TextButton(
+                    onClick = {
+                        showLockDialog = false
+                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                    }
+                ) { Text("Accessibility") }
             }
         )
     }
@@ -522,8 +550,7 @@ private fun AppRow(
 
 private fun buildFitnessLine(fitness: com.dark.launcher.data.repo.FitnessSummary): String {
     val parts = mutableListOf<String>()
-    if (fitness.stepsToday > 0) parts.add("${fitness.stepsToday} STEPS")
     if (fitness.workouts > 0) parts.add("WEEK ${fitness.workouts} WORKOUTS")
     fitness.sprintAvg?.let { parts.add("SPRINT $it") }
-    return "> " + parts.joinToString(" \u00B7 ")
+    return if (parts.isEmpty()) "" else "> " + parts.joinToString(" \u00B7 ")
 }

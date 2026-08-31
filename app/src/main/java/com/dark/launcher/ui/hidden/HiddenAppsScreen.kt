@@ -27,6 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dark.launcher.data.model.AppInfo
 import com.dark.launcher.ui.theme.Gray
 import com.dark.launcher.ui.theme.TerminalGreen
+import com.dark.launcher.util.launchApp
 
 @Composable
 fun HiddenAppsScreen(
@@ -41,6 +44,7 @@ fun HiddenAppsScreen(
     onBack: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     BackHandler { onBack() }
 
@@ -88,7 +92,11 @@ fun HiddenAppsScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(state.hiddenApps, key = { it.packageName + "_" + it.user }) { app ->
-                    HiddenAppRow(app = app, onUnhide = { viewModel.unhide(it) })
+                    HiddenAppRow(
+                        app = app,
+                        onOpen = { launchApp(context, it) },
+                        onUnhide = { viewModel.unhide(it) }
+                    )
                 }
             }
         }
@@ -96,7 +104,11 @@ fun HiddenAppsScreen(
 }
 
 @Composable
-private fun HiddenAppRow(app: AppInfo, onUnhide: (String) -> Unit) {
+private fun HiddenAppRow(
+    app: AppInfo,
+    onOpen: (String) -> Unit,
+    onUnhide: (String) -> Unit
+) {
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -114,6 +126,21 @@ private fun HiddenAppRow(app: AppInfo, onUnhide: (String) -> Unit) {
                 letterSpacing = 1.sp,
                 modifier = Modifier.weight(1f)
             )
+            Surface(
+                onClick = { onOpen(app.packageName) },
+                shape = RoundedCornerShape(12.dp),
+                color = TerminalGreen
+            ) {
+                Text(
+                    text = "OPEN",
+                    fontFamily = FontFamily.Monospace,
+                    color = Color.Black,
+                    fontSize = 10.sp,
+                    letterSpacing = 1.sp,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                )
+            }
+            Spacer(Modifier.width(8.dp))
             Surface(
                 onClick = { onUnhide(app.packageName) },
                 shape = RoundedCornerShape(12.dp),

@@ -88,7 +88,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     name: "version",
     usage: "version",
     help: "Show build info.",
-    run: () => ["D.A.R.K. 1.1.1 (build 12)  |  target sdk 35  |  min sdk 26"],
+    run: () => ["D.A.R.K. 2.2.0 (build 33)  |  target sdk 35  |  min sdk 26"],
   },
   whoami: {
     name: "whoami",
@@ -342,7 +342,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     run: () => [
       "       ▄▄▄▄▄▄▄       root@dark",
       "    ▄█████████▄     -----------------",
-      "  ▄███████████▄     OS: D.A.R.K. 1.1.1",
+      "  ▄███████████▄     OS: D.A.R.K. 2.2.0",
       "  ████████████▄     Kernel: Adaptive Responsive",
       "    ███████████     Shell: dark sh 1.0",
       "       ▀█████▀      Apps: 74",
@@ -381,6 +381,34 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
         "  /storage/emulated/0/DCIM/resume-backup.pdf",
       ];
     },
+  },
+  rec: {
+    name: "rec",
+    usage: "rec start|stop|status",
+    help: "Control the screen recorder overlay.",
+    run: (args) => {
+      const sub = args[0] ?? "status";
+      if (sub === "start") return ["starting recorder — grant screen capture when prompted"];
+      if (sub === "stop") return ["stopping recording..."];
+      return ["overlay: active | recording: no"];
+    },
+  },
+  mode: {
+    name: "mode",
+    usage: "mode [normal|work|night]",
+    help: "Switch focus profile.",
+    run: (args) => {
+      const m = args[0] ?? "normal";
+      if (m === "work") return ["profile set to Work", "FOCUS MODE ON — distract apps hidden"];
+      if (m === "night") return ["profile set to Night", "NIGHT MODE — only phone & messages visible"];
+      return ["mode: normal (Normal)", "usage: mode normal|work|night"];
+    },
+  },
+  steps: {
+    name: "steps",
+    usage: "steps",
+    help: "Today's step count from the motion sensor.",
+    run: () => ["4,218 steps today (source: sensor)"],
   },
 };
 

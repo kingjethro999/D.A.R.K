@@ -10,3 +10,11 @@ val DimWhite = Color(0xFFBDBDBD)
 val Gray = Color(0xFF757575)
 val TerminalGreen = Color(0xFF00FF66)
 val Amber = Color(0xFFFFB74D)
+
+// Recorder palette — D.A.R.K. green theme
+val RecorderGreen = Color(0xFF00FF66)
+val RecorderGreenLight = Color(0xFF00CC52)
+val RecorderGreenAccent = Color(0xFF00E65C)
+val RecorderRed = Color(0xFFFF1744)
+val RecorderNotifBg = Color(0xFF1A1A1A)
+val RecorderSheetBg = Color(0xFF141416)

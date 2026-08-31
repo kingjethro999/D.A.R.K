@@ -1,3 +1,5 @@
+import { APP } from "@/lib/app";
+
 export interface DocBlock {
   type: "p" | "code" | "list" | "table" | "warn" | "heading";
   text?: string;
@@ -38,7 +40,7 @@ export const DOCS: Doc[] = [
         type: "list",
         items: [
           "Open the Download page and tap DOWNLOAD APK.",
-          "Your browser saves dark-launcher-v1.1.1.apk (1.7 MB) to your downloads.",
+          `Your browser saves ${APP.downloadFileName} (2.8 MB) to your downloads.`,
           "If Android blocks it, allow 'install unknown apps' from your browser when prompted.",
         ],
       },
@@ -97,11 +99,11 @@ export const DOCS: Doc[] = [
       {
         type: "heading",
         level: 2,
-        text: "Now playing strip",
+        text: "The bottom bar",
       },
       {
         type: "p",
-        text: "When media is playing and notification access is granted, the current track scrolls across the top of the list. Labels come from a cached repository — no PackageManager lookups on the hot path.",
+        text: "A persistent floating bar holds Home, Settings, Terminal and Recorder, with your live step count at the end. It doubles as the media home: scroll the bar left and the now-playing display slides in — full-width, with long titles scrolling like a marquee, or 'no media playing' when idle.",
       },
       {
         type: "heading",
@@ -119,11 +121,11 @@ export const DOCS: Doc[] = [
       {
         type: "heading",
         level: 2,
-        text: "Switching to terminal mode",
+        text: "Locking the screen",
       },
       {
         type: "p",
-        text: "The list and the terminal are the same surface. Double-tap (or swipe, if you configured it) to flip into the command line. Type `list` in the terminal to come back.",
+        text: "Double-tap the empty space to lock the screen — the launcher registers as a Device Admin so no accessibility service is needed. Triple-tap opens your hidden apps.",
       },
     ],
   },
@@ -228,7 +230,7 @@ export const DOCS: Doc[] = [
     blocks: [
       {
         type: "p",
-        text: "D.A.R.K. Settings is injected into the app list as a fake system entry. Open it like any other app.",
+        text: "D.A.R.K. Settings lives in the bottom bar, next to Terminal and Recorder — it no longer masquerades as an app in the list.",
       },
       {
         type: "heading",
@@ -296,7 +298,7 @@ export const DOCS: Doc[] = [
           { cols: ["GESTURE", "ACTION"], isHeader: true },
           { cols: ["Tap", "Launch the app under your finger"] },
           { cols: ["Long-press", "Open the app menu (hide, share, app info, uninstall)"] },
-          { cols: ["Double-tap", "Flip to terminal mode"] },
+          { cols: ["Double-tap", "Lock the screen (Device Admin)"] },
           { cols: ["Triple-tap", "Open the hidden apps area"] },
           { cols: ["Type", "Instant fuzzy filter of the app list"] },
         ],
@@ -309,6 +311,58 @@ export const DOCS: Doc[] = [
       {
         type: "p",
         text: "A bundled accessibility service can drive terminal and hidden-app flows for users who prefer it. It is fully optional and off by default.",
+      },
+    ],
+  },
+  {
+    slug: "recorder",
+    title: "Screen Recorder",
+    nav: "Screen recorder",
+    group: "SYSTEM",
+    description: "The floating overlay that captures your screen.",
+    blocks: [
+      {
+        type: "p",
+        text: "D.A.R.K. can record anything on screen without leaving your current app. A floating bubble docks to the screen edge; your captures land in a library inside D.A.R.K. Recorder tab.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "The overlay",
+      },
+      {
+        type: "list",
+        items: [
+          "The bubble hugs the screen edge and slides out of the way while you work.",
+          "Tap it to fan open a radial menu — spin to Record, tap again to stop.",
+          "Drag the bubble elsewhere if it is in your way.",
+        ],
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "The countdown",
+      },
+      {
+        type: "p",
+        text: "A 3-2-1 countdown plays before capture begins, so the start of your recording is never clipped off.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "The library",
+      },
+      {
+        type: "list",
+        items: [
+          "Recordings save as MP4 and appear in the Recorder tab's gallery.",
+          "Play them back, share via the system share sheet, or hand them straight to CapCut for editing.",
+          "If CapCut isn't installed, D.A.R.K. opens its Play Store page.",
+        ],
+      },
+      {
+        type: "warn",
+        text: "DRM-protected content (streaming movies, DRM video) cannot be captured. The recorder needs overlay permission — D.A.R.K. asks for it the first time you open the tab.",
       },
     ],
   },

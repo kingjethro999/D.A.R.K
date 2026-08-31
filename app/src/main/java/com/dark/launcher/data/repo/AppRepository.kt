@@ -76,17 +76,6 @@ class AppRepository @Inject constructor(
 
         apps.addAll(loadDualApps(launcherApps, ownUser, ownerPkgs))
 
-        apps += AppInfo(
-            name = "D. A. R. K. Settings",
-            packageName = AppInfo.INTERNAL_SETTINGS,
-            isInternal = true
-        )
-        apps += AppInfo(
-            name = "D. A. R. K. Terminal",
-            packageName = AppInfo.INTERNAL_TERMINAL,
-            isInternal = true
-        )
-
         val sorted = apps.sortedBy { it.name.lowercase() }
         cacheApps(sorted)
         sorted

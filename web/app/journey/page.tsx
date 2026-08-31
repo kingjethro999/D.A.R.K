@@ -7,7 +7,7 @@ import { APP } from "@/lib/app";
 export const metadata: Metadata = {
   title: "Journey — D.A.R.K.",
   description:
-    "The real build history of D.A.R.K., from a rant against bloated launchers to a 1.7 MB signed release.",
+    "The real build history of D.A.R.K., from a rant against bloated launchers to a 2.8 MB signed release.",
 };
 
 export default function JourneyPage() {
@@ -25,7 +25,7 @@ export default function JourneyPage() {
             v{CURRENT_RELEASE} (build {CURRENT_BUILD}) — current
           </span>
           <span className="border border-[#141414] px-4 py-2 text-xs tracking-[0.2em] text-[#7A7A7A]">
-            1.7 MB signed release
+            2.8 MB signed release
           </span>
           <span className="border border-[#141414] px-4 py-2 text-xs tracking-[0.2em] text-[#7A7A7A]">
             {APP.minAndroid}
@@ -111,7 +111,8 @@ export default function JourneyPage() {
           <p className="mt-3 max-w-3xl font-mono text-xs leading-relaxed text-[#7A7A7A]">
             D.A.R.K. version.properties auto-increments the patch number and
             versionCode on every build, so the timeline above is grouped by
-            feature chapter rather than by individual increment. v1.1.1 is
+            feature chapter rather than by individual increment. v{CURRENT_RELEASE}{" "}
+            is
             the release shipped on this site. The full transcript of the build
             lives in the repository&apos;s chat log.
           </p>

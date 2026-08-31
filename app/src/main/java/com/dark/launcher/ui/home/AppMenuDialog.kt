@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DoNotDisturb
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.dark.launcher.data.model.AppInfo
+import com.dark.launcher.util.copyToClipboard
 import com.dark.launcher.util.openAppInfo
 import com.dark.launcher.util.shareApp
 import com.dark.launcher.util.uninstallApp
@@ -46,7 +49,8 @@ import androidx.compose.ui.platform.LocalContext
 fun AppMenuDialog(
     app: AppInfo,
     onDismiss: () -> Unit,
-    onHide: (String) -> Unit
+    onHide: (String) -> Unit,
+    onAddToDistract: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val scale by animateFloatAsState(
@@ -102,6 +106,14 @@ fun AppMenuDialog(
                     Spacer(Modifier.height(8.dp))
                     MenuRow(Icons.Default.Info, "App Info") {
                         openAppInfo(context, app.packageName)
+                        onDismiss()
+                    }
+                    MenuRow(Icons.Default.ContentCopy, "Copy Package Name") {
+                        copyToClipboard(context, "package", app.packageName)
+                        onDismiss()
+                    }
+                    MenuRow(Icons.Default.DoNotDisturb, "Add to Distract List") {
+                        onAddToDistract(app.packageName)
                         onDismiss()
                     }
                     MenuRow(Icons.Default.VisibilityOff, "Hide from Launcher") {

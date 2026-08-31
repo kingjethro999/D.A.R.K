@@ -41,7 +41,8 @@ fun PinDialog(
     title: String,
     onDismiss: () -> Unit,
     onVerify: suspend (String) -> Boolean,
-    onSuccess: () -> Unit
+    onSuccess: () -> Unit,
+    showDefaultHint: Boolean = true
 ) {
     var input by remember { mutableStateOf("") }
     var error by remember { mutableStateOf(false) }
@@ -119,7 +120,7 @@ fun PinDialog(
                 } else {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "default pin: 0000",
+                        text = if (showDefaultHint) "default pin: 0000 — change in Settings" else "enter 4-digit pin",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontFamily = FontFamily.Monospace,
                         fontSize = 11.sp

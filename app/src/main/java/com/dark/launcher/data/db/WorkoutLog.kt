@@ -9,5 +9,6 @@ data class WorkoutLog(
     val type: String,
     val value1: String,
     val value2: String,
+    val note: String = "",
     val timestamp: Long = System.currentTimeMillis()
 )

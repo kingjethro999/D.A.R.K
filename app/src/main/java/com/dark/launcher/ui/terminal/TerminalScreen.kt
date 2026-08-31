@@ -55,7 +55,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun TerminalScreen(
     viewModel: TerminalViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenSetup: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -76,9 +77,11 @@ fun TerminalScreen(
             showPinDialog = true
             deferred.await()
         }
+        viewModel.openSetupRequest = onOpenSetup
         onDispose {
             viewModel.cameraPermissionRequest = {}
             viewModel.pinPromptRequest = { false }
+            viewModel.openSetupRequest = {}
         }
     }
 

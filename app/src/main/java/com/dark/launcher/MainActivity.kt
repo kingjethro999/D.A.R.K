@@ -45,7 +45,19 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        // Returning to the home screen from elsewhere resets to home surface.
-        navController?.popBackStack(DarkRoutes.HOME, inclusive = false)
+        val route = intent.getStringExtra(EXTRA_ROUTE)
+        if (route != null && route != DarkRoutes.HOME) {
+            navController?.navigate(route) {
+                popUpTo(DarkRoutes.HOME)
+                launchSingleTop = true
+            }
+        } else {
+            // Returning to the home screen from elsewhere resets to home surface.
+            navController?.popBackStack(DarkRoutes.HOME, inclusive = false)
+        }
+    }
+
+    companion object {
+        const val EXTRA_ROUTE = "route"
     }
 }

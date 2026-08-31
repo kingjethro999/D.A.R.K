@@ -4,11 +4,15 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dark.launcher.data.model.AppInfo
+import com.dark.launcher.data.repo.AliasRepository
 import com.dark.launcher.data.repo.AppRepository
 import com.dark.launcher.data.repo.AskRepository
+import com.dark.launcher.data.repo.BackupRepository
 import com.dark.launcher.data.repo.FitnessRepository
 import com.dark.launcher.data.repo.GitHubRepository
 import com.dark.launcher.data.repo.LauncherSettingsRepository
+import com.dark.launcher.data.repo.MediaRepository
+import com.dark.launcher.data.repo.StepSensorRepository
 import com.dark.launcher.data.repo.VaultRepository
 import com.dark.launcher.terminal.CLEAR_TERMINAL
 import com.dark.launcher.terminal.TerminalDeps
@@ -28,7 +32,11 @@ class TerminalViewModel @Inject constructor(
     private val fitness: FitnessRepository,
     private val github: GitHubRepository,
     private val vault: VaultRepository,
-    private val ask: AskRepository
+    private val ask: AskRepository,
+    private val aliases: AliasRepository,
+    private val backup: BackupRepository,
+    private val media: MediaRepository,
+    private val steps: StepSensorRepository
 ) : ViewModel() {
 
     data class TerminalUiState(
@@ -42,8 +50,8 @@ class TerminalViewModel @Inject constructor(
     val state: StateFlow<TerminalUiState> = _state.asStateFlow()
 
     var cameraPermissionRequest: () -> Unit = {}
-
     var pinPromptRequest: suspend () -> Boolean = { false }
+    var openSetupRequest: () -> Unit = {}
 
     init {
         viewModelScope.launch {
@@ -78,8 +86,13 @@ class TerminalViewModel @Inject constructor(
             github = github,
             vault = vault,
             ask = ask,
+            aliases = aliases,
+            backup = backup,
+            media = media,
+            steps = steps,
             onCameraPermissionRequest = { cameraPermissionRequest() },
-            onPinVerify = { pinPromptRequest() }
+            onPinVerify = { pinPromptRequest() },
+            onOpenSetup = { openSetupRequest() }
         )
 
         viewModelScope.launch {

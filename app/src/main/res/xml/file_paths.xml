@@ -3,4 +3,5 @@
     <external-files-path name="recordings" path="Movies/recordings/" />
     <external-files-path name="root" path="." />
     <files-path name="internal" path="." />
+    <cache-path name="cache" path="." />
 </paths>

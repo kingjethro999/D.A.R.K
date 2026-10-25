@@ -11,7 +11,7 @@ interface Entry {
 }
 
 const BOOT_LINES = [
-  "D.A.R.K. KERNEL v2.3.9 — Developers' Adaptive Responsive Kernel",
+  "D.A.R.K. KERNEL v2.4.3 — Developers' Adaptive Responsive Kernel",
   "decompressing launcher... ok",
   "mounting app list.... ok",
   "starting terminal service... ok",

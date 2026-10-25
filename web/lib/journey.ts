@@ -197,7 +197,28 @@ export const JOURNEY: JourneyChapter[] = [
       "Room migrations preserve workout history; CommandParser unit tests added",
     ],
   },
+  {
+    version: "v2.4.3",
+    codename: "APP SHARING",
+    date: "OCT 2026",
+    blurb:
+      "The sharing pass. Long-press any app now offers a real 'Share APK' option that sends the installed package file itself — not just a Play Store link. D.A.R.K. copies the APK from the app's install location into its cache, exposes it through the FileProvider, and opens the Android share sheet so you can beam it to Google Files, Bluetooth, Messages, or any other target. Same signed release build, side-loadable on Android 8.0+.",
+    points: [
+      "Signed release APK at v2.4.3 (versionCode 56), side-loadable on Android 8.0+",
+      "Long-press app menu: Share APK sends the real .apk file, not a store link",
+      "App package copied to app cache and shared via FileProvider with URI read permission",
+      "Android share sheet lets you pick Google Files, Bluetooth, Messages, or any target",
+      "Terminal: ask, find, git refresh, stats, mode, rec, steps, now, alias, backup, vault lock|unlock, hide <app>",
+      "Bottom bar: Home · Settings · Terminal · Recorder, live step pill, now-playing marquee",
+      "Recorder: edge bubble, radial menu, 3-2-1 countdown, MP4 to Gallery/Movies/DARK, CapCut route",
+      "Profiles: Normal · Work (vault lock) · Night (phone + messages only)",
+      "Widget strip: battery, next alarm, unread count under the clock",
+      "Vault: PIN-derived AES key encrypts distraction apps away",
+      "Config backup: export/restore hidden apps, gestures, vault config, terminal aliases",
+      "API keys configurable in Settings — no rebuild required",
+    ],
+  },
 ];
 
-export const CURRENT_RELEASE = "2.3.9";
-export const CURRENT_BUILD = 52;
+export const CURRENT_RELEASE = "2.4.3";
+export const CURRENT_BUILD = 56;

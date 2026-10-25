@@ -10,9 +10,11 @@ import android.content.pm.LauncherApps
 import android.net.Uri
 import android.os.Process
 import android.provider.Settings
+import androidx.core.content.FileProvider
 import com.dark.launcher.data.model.AppInfo
 import com.dark.launcher.service.DarkDeviceAdminReceiver
 import com.dark.launcher.service.LauncherAccessibilityService
+import java.io.File
 
 fun launchApp(context: Context, packageName: String) {
     val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName) ?: return
@@ -54,12 +56,47 @@ fun uninstallApp(context: Context, packageName: String) {
 }
 
 fun shareApp(context: Context, app: AppInfo) {
-    val link = "https://play.google.com/store/apps/details?id=${app.packageName}"
-    val send = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, "Check out this app: $link")
+    val applicationInfo = runCatching {
+        val user = app.user
+
+        if (user != null && user != Process.myUserHandle()) {
+            val launcherApps = context.getSystemService(
+                Context.LAUNCHER_APPS_SERVICE
+            ) as LauncherApps
+
+            launcherApps.getApplicationInfo(
+                app.packageName,
+                0,
+                user
+            )
+        } else {
+            context.packageManager.getApplicationInfo(
+                app.packageName,
+                0
+            )
+        }
+    }.getOrNull() ?: return
+
+    val apkPath = applicationInfo.sourceDir ?: return
+    val apkFile = File(apkPath)
+    if (!apkFile.exists()) return
+
+    val cacheFile = File(context.cacheDir, "${app.packageName}.apk").apply {
+        delete()
+        apkFile.inputStream().use { input ->
+            outputStream().use { input.copyTo(it) }
+        }
     }
-    val chooser = Intent.createChooser(send, "Share ${app.name} via")
+
+    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", cacheFile)
+
+    val send = Intent(Intent.ACTION_SEND).apply {
+        type = "application/vnd.android.package-archive"
+        putExtra(Intent.EXTRA_STREAM, uri)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+    send.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val chooser = Intent.createChooser(send, "Share ${app.name} APK via")
     chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(chooser)
 }

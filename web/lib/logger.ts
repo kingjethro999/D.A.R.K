@@ -2,7 +2,12 @@ type LogLevel = "info" | "warn" | "error" | "debug";
 
 const PREFIX = "[D.A.R.K]";
 
-function write(level: LogLevel, scope: string, message: string, data?: unknown): void {
+function write(
+  level: LogLevel,
+  scope: string,
+  message: string,
+  data?: unknown,
+): void {
   const payload: Record<string, unknown> = {
     scope,
     message,

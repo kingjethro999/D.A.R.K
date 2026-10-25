@@ -45,14 +45,14 @@ export function StarRepo({ compact = false }: { compact?: boolean }) {
     <section
       className={cn(
         "border-t border-[#111111]",
-        compact ? "py-6" : "py-12 md:py-16"
+        compact ? "py-6" : "py-12 md:py-16",
       )}
     >
       <Container>
         <div
           className={cn(
             "flex flex-col gap-5 border border-[#1E1E1E] bg-[#040404] md:flex-row md:items-center",
-            compact ? "p-4" : "p-5 sm:p-6"
+            compact ? "p-4" : "p-5 sm:p-6",
           )}
         >
           <div className="flex items-center gap-4">

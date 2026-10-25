@@ -77,7 +77,8 @@ export function AuthorBio() {
           <div className="font-mono text-sm text-[#00FF9C]">
             <p>
               <span className="text-[#00FF9C]">root@dark:~# </span>
-              searching the web for &quot;{result?.name ?? DEFAULT_AUTHOR}&quot;...
+              searching the web for &quot;{result?.name ?? DEFAULT_AUTHOR}
+              &quot;...
             </p>
             <p className="mt-1 text-[#9EFFC7]">querying 6 sources... ok</p>
             <p className="mt-1 text-[#9EFFC7]">

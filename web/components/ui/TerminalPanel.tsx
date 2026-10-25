@@ -17,7 +17,7 @@ export function TerminalPanel({
     <div
       className={cn(
         "overflow-hidden border border-[#1E1E1E] bg-[#050505]",
-        className
+        className,
       )}
     >
       <div className="flex items-center gap-2 border-b border-[#1E1E1E] bg-[#0A0A0A] px-4 py-3">

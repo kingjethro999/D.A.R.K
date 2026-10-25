@@ -161,7 +161,7 @@ export const JOURNEY: JourneyChapter[] = [
     ],
   },
   {
-    version: "v2.2.0",
+    version: "v2.0.8",
     codename: "THE OVERHAUL",
     date: "AUG 2026",
     blurb:
@@ -178,7 +178,26 @@ export const JOURNEY: JourneyChapter[] = [
       "Room migrations preserve workout history; CommandParser unit tests added",
     ],
   },
+  {
+    version: "v2.3.9",
+    codename: "THE COMPLETE KERNEL",
+    date: "OCT 2026",
+    blurb:
+      "The stabilization pass. Everything from the recorder overhaul lands in a single signed release APK, rebuilt from source and published as a GitHub release. Every feature the codebase ships is in the build: terminal commands (ask, find, git, stats, mode, rec, steps, now, alias, backup, vault, hide), the persistent bottom bar (Home · Settings · Terminal · Recorder + step pill), the floating recorder bubble with radial menu and 3-2-1 countdown, focus profiles (Normal · Work · Night), the widget strip (battery, alarm, unread), PIN-protected hidden apps, the AES vault, OLED black pixels, long-press app menus, config backup/restore, and user-configurable API keys in Settings. No Play Store, no ads, no tracking — side-load the APK straight from this site.",
+    points: [
+      "Signed release APK rebuilt from source at v2.3.9 (versionCode 52), side-loadable on Android 8.0+",
+      "Terminal: ask, find, git refresh, stats, mode, rec, steps, now, alias, backup, vault lock|unlock, hide <app>",
+      "Bottom bar: Home · Settings · Terminal · Recorder, live step pill, now-playing marquee",
+      "Recorder: edge bubble, radial menu, 3-2-1 countdown, MP4 to Gallery/Movies/DARK, CapCut route",
+      "Profiles: Normal · Work (vault lock) · Night (phone + messages only)",
+      "Widget strip: battery, next alarm, unread count under the clock",
+      "Vault: PIN-derived AES key encrypts distraction apps away",
+      "Config backup: export/restore hidden apps, gestures, vault config, terminal aliases",
+      "API keys configurable in Settings — no rebuild required",
+      "Room migrations preserve workout history; CommandParser unit tests added",
+    ],
+  },
 ];
 
-export const CURRENT_RELEASE = "2.2.0";
-export const CURRENT_BUILD = 33;
+export const CURRENT_RELEASE = "2.3.9";
+export const CURRENT_BUILD = 52;

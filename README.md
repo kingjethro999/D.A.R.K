@@ -30,29 +30,29 @@ OLED BLACK · TEXT ONLY · NO ADS · BUILT WITH KOTLIN · COMPOSE
 
 ## Terminal commands
 
-| Command | What it does |
-| --- | --- |
-| `source <app> [dual]` | Fuzzy-launch an installed app (hidden apps require the PIN) |
-| `open / play / start <app>` | Natural-language app launch |
-| `nox on\|off` | Toggle the flashlight |
-| `on\|off wifi` | Open the Wi-Fi panel / toggle |
-| `on bluetooth` | Request Bluetooth |
-| `uuid` | Generate and copy a UUIDv4 |
-| `b64 encode\|decode <text>` | Base64 round-trip |
-| `json format <json>` | Pretty-print JSON |
-| `log <type> [v1] [v2]` | Log a workout (e.g. `log sprint 100m 11.2s`) |
-| `stats` | Weekly fitness summary |
-| `git refresh` | Pull GitHub stats (token set in Settings) |
-| `lock [app]` | Focus mode ON; with an app, adds it to the distract list |
-| `unlock [app]` | Focus mode OFF; with an app, removes it from the distract list |
-| `vault lock\|unlock [app]` | Focus mode + the AES file vault |
-| `hide <app>` | Hide an app (asks for the hide PIN) |
-| `ask <question>` | Live web search (Firecrawl) + LLM answer (Groq) |
-| `find <query>` | Search every file on the device by name |
-| `logcat [-t N]` | Dump the system log |
-| `version` | Show build info |
-| `echo / date / whoami / help / clear` | Shell basics |
-| *anything else* | Falls through to the Linux shell, or gets a friendly hint |
+| Command                               | What it does                                                   |
+| ------------------------------------- | -------------------------------------------------------------- |
+| `source <app> [dual]`                 | Fuzzy-launch an installed app (hidden apps require the PIN)    |
+| `open / play / start <app>`           | Natural-language app launch                                    |
+| `nox on\|off`                         | Toggle the flashlight                                          |
+| `on\|off wifi`                        | Open the Wi-Fi panel / toggle                                  |
+| `on bluetooth`                        | Request Bluetooth                                              |
+| `uuid`                                | Generate and copy a UUIDv4                                     |
+| `b64 encode\|decode <text>`           | Base64 round-trip                                              |
+| `json format <json>`                  | Pretty-print JSON                                              |
+| `log <type> [v1] [v2]`                | Log a workout (e.g. `log sprint 100m 11.2s`)                   |
+| `stats`                               | Weekly fitness summary                                         |
+| `git refresh`                         | Pull GitHub stats (token set in Settings)                      |
+| `lock [app]`                          | Focus mode ON; with an app, adds it to the distract list       |
+| `unlock [app]`                        | Focus mode OFF; with an app, removes it from the distract list |
+| `vault lock\|unlock [app]`            | Focus mode + the AES file vault                                |
+| `hide <app>`                          | Hide an app (asks for the hide PIN)                            |
+| `ask <question>`                      | Live web search (Firecrawl) + LLM answer (Groq)                |
+| `find <query>`                        | Search every file on the device by name                        |
+| `logcat [-t N]`                       | Dump the system log                                            |
+| `version`                             | Show build info                                                |
+| `echo / date / whoami / help / clear` | Shell basics                                                   |
+| _anything else_                       | Falls through to the Linux shell, or gets a friendly hint      |
 
 ---
 

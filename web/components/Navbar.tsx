@@ -40,7 +40,7 @@ export function Navbar() {
                 "rounded-full px-3 py-1.5 font-mono text-[11px] tracking-[0.2em] transition-colors",
                 isActive(link.href)
                   ? "bg-[#00FF9C]/10 text-[#00FF9C]"
-                  : "text-[#7A7A7A] hover:text-[#E8E8E8]"
+                  : "text-[#7A7A7A] hover:text-[#E8E8E8]",
               )}
             >
               {link.label}
@@ -64,19 +64,19 @@ export function Navbar() {
           <span
             className={cn(
               "h-0.5 w-4 bg-current transition-transform",
-              open && "translate-y-[6px] rotate-45"
+              open && "translate-y-[6px] rotate-45",
             )}
           />
           <span
             className={cn(
               "h-0.5 w-4 bg-current transition-opacity",
-              open && "opacity-0"
+              open && "opacity-0",
             )}
           />
           <span
             className={cn(
               "h-0.5 w-4 bg-current transition-transform",
-              open && "-translate-y-[6px] -rotate-45"
+              open && "-translate-y-[6px] -rotate-45",
             )}
           />
         </button>
@@ -87,7 +87,7 @@ export function Navbar() {
           "mx-auto mt-2 w-full max-w-4xl overflow-hidden transition-all duration-300 md:hidden",
           open
             ? "max-h-96 rounded-2xl border border-[#1E1E1E] bg-[#050505]/95 backdrop-blur-md"
-            : "max-h-0"
+            : "max-h-0",
         )}
       >
         <div className="flex flex-col gap-1 p-3">
@@ -100,7 +100,7 @@ export function Navbar() {
                 "rounded-xl px-4 py-2.5 font-mono text-xs tracking-[0.2em] transition-colors",
                 isActive(link.href)
                   ? "bg-[#00FF9C]/10 text-[#00FF9C]"
-                  : "text-[#7A7A7A] hover:text-[#E8E8E8]"
+                  : "text-[#7A7A7A] hover:text-[#E8E8E8]",
               )}
             >
               {link.label}

@@ -25,7 +25,7 @@ function resolveApp(q: string): { name: string; pkg: string } | null {
   const exact = DEMO_APPS[key];
   if (exact) return exact;
   const fuzzy = Object.entries(DEMO_APPS).find(
-    ([k]) => k.startsWith(key) || key.startsWith(k) || k.includes(key)
+    ([k]) => k.startsWith(key) || key.startsWith(k) || k.includes(key),
   );
   return fuzzy?.[1] ?? null;
 }
@@ -88,7 +88,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     name: "version",
     usage: "version",
     help: "Show build info.",
-    run: () => ["D.A.R.K. 2.2.0 (build 33)  |  target sdk 35  |  min sdk 26"],
+    run: () => ["D.A.R.K. 2.3.9 (build 52)  |  target sdk 35  |  min sdk 26"],
   },
   whoami: {
     name: "whoami",
@@ -157,7 +157,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
       out.push(
         app.pkg === "dark.internal.settings"
           ? "opening D.A.R.K. Settings"
-          : `open ${app.name}`
+          : `open ${app.name}`,
       );
       if (args.includes("dual")) out[1] += "  [dual instance]";
       return out;
@@ -191,8 +191,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
       if (args.length < 2) return ["usage: b64 [encode|decode] [text]"];
       const [mode, ...rest] = args;
       const text = rest.join(" ");
-      if (mode === "encode")
-        return [btoa(unescape(encodeURIComponent(text)))];
+      if (mode === "encode") return [btoa(unescape(encodeURIComponent(text)))];
       if (mode === "decode") {
         try {
           return [decodeURIComponent(escape(atob(text)))];
@@ -208,7 +207,8 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     usage: "json format <json>",
     help: "Pretty-print JSON.",
     run: (args) => {
-      const raw = args[0] === "format" ? args.slice(1).join(" ") : args.join(" ");
+      const raw =
+        args[0] === "format" ? args.slice(1).join(" ") : args.join(" ");
       if (!raw) return ["usage: json format [json]"];
       try {
         return JSON.stringify(JSON.parse(raw), null, 2).split("\n");
@@ -277,7 +277,10 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
             `FOCUS MODE ON (${remaining} apps still distracted)`,
           ];
         state.vaultLocked = false;
-        return [`'${app.name}' removed from the distract list`, "FOCUS MODE OFF"];
+        return [
+          `'${app.name}' removed from the distract list`,
+          "FOCUS MODE OFF",
+        ];
       }
       state.vaultLocked = false;
       return ["FOCUS MODE OFF"];
@@ -308,7 +311,10 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
       if (!sub || !["lock", "unlock"].includes(sub))
         return ["usage: vault [lock|unlock] [app]"];
       const rest = args.slice(1);
-      const lines = sub === "lock" ? DEMO_COMMANDS.lock.run(rest) : DEMO_COMMANDS.unlock.run(rest);
+      const lines =
+        sub === "lock"
+          ? DEMO_COMMANDS.lock.run(rest)
+          : DEMO_COMMANDS.unlock.run(rest);
       return [
         sub === "lock"
           ? "VAULT LOCKED (3 files encrypted)"
@@ -342,7 +348,7 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     run: () => [
       "       ▄▄▄▄▄▄▄       root@dark",
       "    ▄█████████▄     -----------------",
-      "  ▄███████████▄     OS: D.A.R.K. 2.2.0",
+      "  ▄███████████▄     OS: D.A.R.K. 2.3.9",
       "  ████████████▄     Kernel: Adaptive Responsive",
       "    ███████████     Shell: dark sh 1.0",
       "       ▀█████▀      Apps: 74",
@@ -388,7 +394,8 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     help: "Control the screen recorder overlay.",
     run: (args) => {
       const sub = args[0] ?? "status";
-      if (sub === "start") return ["starting recorder — grant screen capture when prompted"];
+      if (sub === "start")
+        return ["starting recorder — grant screen capture when prompted"];
       if (sub === "stop") return ["stopping recording..."];
       return ["overlay: active | recording: no"];
     },
@@ -399,8 +406,13 @@ export const DEMO_COMMANDS: Record<string, DemoCommand> = {
     help: "Switch focus profile.",
     run: (args) => {
       const m = args[0] ?? "normal";
-      if (m === "work") return ["profile set to Work", "FOCUS MODE ON — distract apps hidden"];
-      if (m === "night") return ["profile set to Night", "NIGHT MODE — only phone & messages visible"];
+      if (m === "work")
+        return ["profile set to Work", "FOCUS MODE ON — distract apps hidden"];
+      if (m === "night")
+        return [
+          "profile set to Night",
+          "NIGHT MODE — only phone & messages visible",
+        ];
       return ["mode: normal (Normal)", "usage: mode normal|work|night"];
     },
   },
@@ -438,9 +450,7 @@ export function runDemoCommand(raw: string): DemoResponse {
 
   if (KNOWN.includes(keyword)) {
     return {
-      lines: [
-        `dark: missing or extra arguments for '${keyword}'. See 'help'.`,
-      ],
+      lines: [`dark: missing or extra arguments for '${keyword}'. See 'help'.`],
       clear: false,
     };
   }
@@ -488,7 +498,8 @@ export function runDemoCommand(raw: string): DemoResponse {
   }
 
   if (keyword === "pwd") return { lines: ["/"], clear: false };
-  if (keyword === "ls") return { lines: ["apps  list  settings  vault"], clear: false };
+  if (keyword === "ls")
+    return { lines: ["apps  list  settings  vault"], clear: false };
   if (keyword === "cat" && args[0] === "welcome.txt")
     return {
       lines: [

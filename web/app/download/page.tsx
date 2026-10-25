@@ -8,11 +8,11 @@ import { APP } from "@/lib/app";
 
 export const metadata: Metadata = {
   title: "Download — D.A.R.K.",
-  description:
-    `Download D.A.R.K. v${APP.version} — a 2.8 MB signed APK. No Play Store, no ads, no tracking. Side-loadable on Android 8.0+.`,
+  description: `Download D.A.R.K. v${APP.version} — a ${(APP.sizeBytes / (1024 * 1024)).toFixed(1)} MB signed APK. No Play Store, no ads, no tracking. Side-loadable on Android 8.0+.`,
 };
 
-const APK_SHA256 = "da68aa3ff33b8e500523e106e261674f6936c3823d6515cf3541f9b96a49f7a2";
+const APK_SHA256 =
+  "da68aa3ff33b8e500523e106e261674f6936c3823d6515cf3541f9b96a49f7a2";
 
 const REQUIREMENTS = [
   { k: "ANDROID", v: "8.0 (API 26) or newer" },
@@ -52,7 +52,7 @@ export default function DownloadPage() {
       <PageHeader
         index="DOWNLOAD"
         title="GET THE APK"
-        subtitle="One signed file, 2.8 megabytes, no Play Store in the chain. Side-load it on any Android 8.0+ device and your home screen becomes a terminal."
+        subtitle="One signed file, ${(APP.sizeBytes / (1024 * 1024)).toFixed(1)} megabytes, no Play Store in the chain. Side-load it on any Android 8.0+ device and your home screen becomes a terminal."
       />
 
       <Container className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
@@ -132,7 +132,10 @@ export default function DownloadPage() {
               Read the journey.
             </Link>{" "}
             Installing for the first time?{" "}
-            <Link href="/docs/installation" className="text-[#00FF9C] underline">
+            <Link
+              href="/docs/installation"
+              className="text-[#00FF9C] underline"
+            >
               Follow the install guide.
             </Link>
           </p>

@@ -18,7 +18,7 @@ export function Badge({ children, color = "green", className }: BadgeProps) {
       className={cn(
         "inline-block border px-2 py-0.5 font-mono text-[10px] tracking-[0.2em]",
         colors[color],
-        className
+        className,
       )}
     >
       {children}

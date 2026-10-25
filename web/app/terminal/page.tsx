@@ -20,7 +20,10 @@ const HIGHLIGHTS = [
   { cmd: "log sprint 100m 11.2s", desc: "Workouts logged straight to Room." },
   { cmd: "vault lock", desc: "AES-encrypts the focus vault with your PIN." },
   { cmd: "logcat -t 20", desc: "Stream the last lines of the system log." },
-  { cmd: "srce whatsapp", desc: "Typos get git-style suggestions, not errors." },
+  {
+    cmd: "srce whatsapp",
+    desc: "Typos get git-style suggestions, not errors.",
+  },
   { cmd: "my name is king jethro", desc: "Natural language is understood." },
 ];
 

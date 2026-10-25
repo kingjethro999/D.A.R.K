@@ -41,7 +41,10 @@ async function searchWeb(query: string): Promise<TavilyResult[]> {
 }
 
 function extractJson(raw: string): unknown {
-  const cleaned = raw.replace(/```json/gi, "").replace(/```/g, "").trim();
+  const cleaned = raw
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
   const tryParse = (s: string): unknown => {
     try {
       return JSON.parse(s);
@@ -61,7 +64,7 @@ function extractJson(raw: string): unknown {
   if (repaired !== undefined) return repaired;
   if (start >= 0 && end > start) {
     const repairedSlice = tryParse(
-      cleaned.slice(start, end + 1).replace(/,\s*([}\]])/g, "$1")
+      cleaned.slice(start, end + 1).replace(/,\s*([}\]])/g, "$1"),
     );
     if (repairedSlice !== undefined) return repairedSlice;
   }
@@ -83,8 +86,9 @@ function asFacts(value: unknown, fallback: string[]): string[] {
 }
 
 async function askGroq(
-  messages: { role: string; content: string }[]
-): Promise<string> {  const key = process.env.GROQ_API_KEY;
+  messages: { role: string; content: string }[],
+): Promise<string> {
+  const key = process.env.GROQ_API_KEY;
   if (!key) throw new Error("Groq key not configured");
 
   for (const model of GROQ_MODELS) {
@@ -130,12 +134,15 @@ export async function POST(req: Request) {
       {
         role: "system",
         content:
-          "You are a research assistant writing a short bio. Respond ONLY with strict JSON matching this schema: {\"headline\": string, \"summary\": string (2-3 sentences), \"facts\": string[] (exactly 4 concise factual bullets)}. Base everything on the provided web excerpts. If the excerpts give no real facts about the person, say so honestly in the summary instead of inventing details.",
+          'You are a research assistant writing a short bio. Respond ONLY with strict JSON matching this schema: {"headline": string, "summary": string (2-3 sentences), "facts": string[] (exactly 4 concise factual bullets)}. Base everything on the provided web excerpts. If the excerpts give no real facts about the person, say so honestly in the summary instead of inventing details.',
       },
       {
         role: "user",
         content: `Subject: ${query}\n\nWeb excerpts:\n${results
-          .map((r, i) => `[${i + 1}] ${r.title ?? "untitled"}\n${(r.content ?? "").slice(0, 400)}`)
+          .map(
+            (r, i) =>
+              `[${i + 1}] ${r.title ?? "untitled"}\n${(r.content ?? "").slice(0, 400)}`,
+          )
           .join("\n\n")}`,
       },
     ]);
@@ -146,11 +153,15 @@ export async function POST(req: Request) {
         ? (extracted as Partial<AuthorPayload>)
         : {};
     const summary =
-      parsed.summary && typeof parsed.summary === "string" && parsed.summary.trim()
+      parsed.summary &&
+      typeof parsed.summary === "string" &&
+      parsed.summary.trim()
         ? parsed.summary.trim()
         : "No reliable public write-up was found in the sources searched. The details below are best-effort from the web.";
     const headline =
-      parsed.headline && typeof parsed.headline === "string" && parsed.headline.trim()
+      parsed.headline &&
+      typeof parsed.headline === "string" &&
+      parsed.headline.trim()
         ? parsed.headline.trim()
         : "Developer, tinkerer, builder of dumb-fast software.";
 
@@ -176,7 +187,7 @@ export async function POST(req: Request) {
       {
         error: err instanceof Error ? err.message : "author lookup failed",
       },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }

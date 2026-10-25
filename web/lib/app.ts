@@ -5,13 +5,13 @@ export const APP = {
   fullName: "Developers' Adaptive Responsive Kernel",
   tagline: "A minimalist text-only launcher for your Android phone.",
   packageName: "com.dark.launcher",
-  version: "2.2.0",
-  build: 33,
+  version: "2.3.9",
+  build: 52,
   minAndroid: "Android 8.0 (API 26)",
   targetSdk: 35,
-  sourceApk: "/dark-launcher-v2.2.0.apk",
-  downloadFileName: "dark-launcher-v2.2.0.apk",
-  sizeBytes: 2825912,
+  sourceApk: "/dark-launcher-v2.3.9.apk",
+  downloadFileName: "dark-launcher-v2.3.9.apk",
+  sizeBytes: 2956431,
   repository: "https://github.com/kingjethro999/D.A.R.K",
 } as const;
 
@@ -123,8 +123,12 @@ export const FEATURES: Feature[] = [
 export const COMMANDS: CommandExample[] = [
   {
     command: "source whatsapp dual",
-    output: ["Executing binary: com.whatsapp...", "open dual messenger instance"],
-    description: "Fuzzy-launches an installed app — even Samsung dual instances.",
+    output: [
+      "Executing binary: com.whatsapp...",
+      "open dual messenger instance",
+    ],
+    description:
+      "Fuzzy-launches an installed app — even Samsung dual instances.",
   },
   {
     command: "my name is king jethro",
@@ -160,7 +164,8 @@ export const COMMANDS: CommandExample[] = [
       "dark matter is an invisible mass that makes up ~27% of the universe...",
       "(via Space.com, Wikipedia, Nasa.gov)",
     ],
-    description: "Ask anything — Firecrawl searches the web, Groq answers inline.",
+    description:
+      "Ask anything — Firecrawl searches the web, Groq answers inline.",
   },
   {
     command: "find my resume",

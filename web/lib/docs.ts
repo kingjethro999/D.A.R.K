@@ -166,7 +166,9 @@ export const DOCS: Doc[] = [
           { cols: ["clear", "Clear the terminal history"] },
           { cols: ["list", "Return to the app list"] },
           { cols: ["version", "Show build info"] },
-          { cols: ["date / echo / whoami", "Boring, classic, always available"] },
+          {
+            cols: ["date / echo / whoami", "Boring, classic, always available"],
+          },
           { cols: ["nox on | nox off", "Toggle the flashlight"] },
           { cols: ["on wifi | off wifi", "Open the wifi panel"] },
           { cols: ["on bluetooth", "Request bluetooth enable"] },
@@ -210,9 +212,18 @@ export const DOCS: Doc[] = [
         type: "table",
         rows: [
           { cols: ["COMMAND", "WHAT IT DOES"], isHeader: true },
-          { cols: ["logcat [-t N]", "Dump the last N lines of the system log"] },
-          { cols: ["anything else", "Passed straight to the Linux shell (ShellStream)"] },
-          { cols: ["ls / pwd / cd ...", "Real shell traversal where permitted"] },
+          {
+            cols: ["logcat [-t N]", "Dump the last N lines of the system log"],
+          },
+          {
+            cols: [
+              "anything else",
+              "Passed straight to the Linux shell (ShellStream)",
+            ],
+          },
+          {
+            cols: ["ls / pwd / cd ...", "Real shell traversal where permitted"],
+          },
         ],
       },
       {
@@ -297,7 +308,12 @@ export const DOCS: Doc[] = [
         rows: [
           { cols: ["GESTURE", "ACTION"], isHeader: true },
           { cols: ["Tap", "Launch the app under your finger"] },
-          { cols: ["Long-press", "Open the app menu (hide, share, app info, uninstall)"] },
+          {
+            cols: [
+              "Long-press",
+              "Open the app menu (hide, share, app info, uninstall)",
+            ],
+          },
           { cols: ["Double-tap", "Lock the screen (Device Admin)"] },
           { cols: ["Triple-tap", "Open the hidden apps area"] },
           { cols: ["Type", "Instant fuzzy filter of the app list"] },

@@ -45,8 +45,8 @@ export default function AboutPage() {
           </p>
           <p className="mt-4 font-mono text-xs leading-relaxed text-[#7A7A7A]">
             This site, the launcher, and the release APK are all maintained by
-            one person — which is exactly why everything on here is honest:
-            real build history, real commands, real APK.
+            one person — which is exactly why everything on here is honest: real
+            build history, real commands, real APK.
           </p>
           <p className="mt-4 font-mono text-xs leading-relaxed text-[#7A7A7A]">
             Everything is open source:{" "}
@@ -93,9 +93,8 @@ export default function AboutPage() {
         </h2>
         <p className="mt-3 max-w-2xl font-mono text-sm leading-relaxed text-[#7A7A7A]">
           The panel below runs a real web search through this server and asks a
-          Groq model to write the bio from what it finds. Same
-          developer-tooling spirit as the launcher — just for people instead of
-          packages.
+          Groq model to write the bio from what it finds. Same developer-tooling
+          spirit as the launcher — just for people instead of packages.
         </p>
         <div className="mt-8">
           <AuthorBio />

@@ -8,7 +8,12 @@ interface PageHeaderProps {
   className?: string;
 }
 
-export function PageHeader({ index, title, subtitle, className }: PageHeaderProps) {
+export function PageHeader({
+  index,
+  title,
+  subtitle,
+  className,
+}: PageHeaderProps) {
   return (
     <Container className={cn("pt-14 md:pt-20", className)}>
       <p className="font-mono text-xs tracking-[0.3em] text-[#00FF9C]">

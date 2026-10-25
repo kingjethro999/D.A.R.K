@@ -43,10 +43,12 @@ export function Download() {
         </h2>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
-          <TerminalPanel title={`${APP.name} ${APP.version} - sideload package`}>
+          <TerminalPanel
+            title={`${APP.name} ${APP.version} - sideload package`}
+          >
             <p className="font-mono text-xs leading-relaxed text-[#7A7A7A]">
-              {APP.fullName} v{APP.version} (build {APP.build}). Signed APK,
-              no Play Store, no ads, no tracking. Side-loadable on any device
+              {APP.fullName} v{APP.version} (build {APP.build}). Signed APK, no
+              Play Store, no ads, no tracking. Side-loadable on any device
               running {APP.minAndroid} or newer.
             </p>
             <div className="mt-6 flex flex-col gap-3">

@@ -17,7 +17,7 @@ export function DocsSidebar() {
       [doc.title, doc.nav, doc.description, doc.group]
         .join(" ")
         .toLowerCase()
-        .includes(q)
+        .includes(q),
     );
   }, [query]);
 
@@ -60,7 +60,7 @@ export function DocsSidebar() {
                           "block border-l-2 px-3 py-1.5 font-mono text-xs transition-colors",
                           active
                             ? "border-[#00FF9C] bg-[#00FF9C]/5 text-[#00FF9C]"
-                            : "border-transparent text-[#7A7A7A] hover:border-[#333333] hover:text-[#E8E8E8]"
+                            : "border-transparent text-[#7A7A7A] hover:border-[#333333] hover:text-[#E8E8E8]",
                         )}
                       >
                         {doc.nav}

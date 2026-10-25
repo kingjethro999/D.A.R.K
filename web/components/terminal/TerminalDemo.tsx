@@ -11,7 +11,7 @@ interface Entry {
 }
 
 const BOOT_LINES = [
-  "D.A.R.K. KERNEL v2.2.0 — Developers' Adaptive Responsive Kernel",
+  "D.A.R.K. KERNEL v2.3.9 — Developers' Adaptive Responsive Kernel",
   "decompressing launcher... ok",
   "mounting app list.... ok",
   "starting terminal service... ok",
@@ -40,7 +40,10 @@ export function TerminalDemo() {
     let i = 0;
     const timer = setInterval(() => {
       if (i < BOOT_LINES.length) {
-        setEntries((prev) => [...prev, { id: nextId(), kind: "sys", text: BOOT_LINES[i] }]);
+        setEntries((prev) => [
+          ...prev,
+          { id: nextId(), kind: "sys", text: BOOT_LINES[i] },
+        ]);
         i += 1;
       } else {
         clearInterval(timer);
@@ -95,7 +98,7 @@ export function TerminalDemo() {
       const baseId = nextId();
       streamOut(resp.lines, baseId);
     },
-    [streamOut]
+    [streamOut],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -176,9 +179,7 @@ export function TerminalDemo() {
               <p
                 className={cn(
                   "whitespace-pre-wrap",
-                  entry.kind === "sys"
-                    ? "text-[#00FF9C]/60"
-                    : "text-[#9EFFC7]"
+                  entry.kind === "sys" ? "text-[#00FF9C]/60" : "text-[#9EFFC7]",
                 )}
               >
                 {entry.text}
@@ -207,7 +208,7 @@ export function TerminalDemo() {
             <span
               className={cn(
                 "absolute right-0 top-0 h-5 w-2.5 bg-[#00FF9C]",
-                !cursorVisible && "opacity-0"
+                !cursorVisible && "opacity-0",
               )}
             />
           </span>

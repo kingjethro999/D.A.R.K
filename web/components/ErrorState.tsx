@@ -20,7 +20,7 @@ export function ErrorState({
       role="alert"
       className={cn(
         "flex w-full flex-col items-center gap-3 border border-[#FF6B6B]/40 bg-[#FF6B6B]/5 px-5 py-4 text-center",
-        className
+        className,
       )}
     >
       <p className="font-mono text-xs tracking-[0.25em] text-[#FF6B6B]">

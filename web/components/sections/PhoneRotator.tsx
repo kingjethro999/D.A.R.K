@@ -30,7 +30,7 @@ export function PhoneRotator() {
             "relative rounded-[2.4rem] border border-[#1E1E1E] bg-[#0A0A0A] p-3 shadow-[0_0_80px_rgba(0,255,156,0.08)] transition-transform duration-500",
             rotate
               ? "[transform:rotateY(-12deg)_rotateX(6deg)_scale(0.98)]"
-              : "[transform:rotateY(-6deg)_rotateX(3deg)]"
+              : "[transform:rotateY(-6deg)_rotateX(3deg)]",
           )}
         >
           <div className="mx-auto flex w-fit items-center gap-1 rounded-t-xl bg-black px-4 pb-1.5 pt-2">
@@ -63,7 +63,9 @@ export function PhoneRotator() {
             }}
             className={cn(
               "h-1.5 rounded-full transition-all duration-300",
-              i === index ? "w-8 bg-[#00FF9C]" : "w-1.5 bg-[#2A2A2A] hover:bg-[#4A4A4A]"
+              i === index
+                ? "w-8 bg-[#00FF9C]"
+                : "w-1.5 bg-[#2A2A2A] hover:bg-[#4A4A4A]",
             )}
           />
         ))}

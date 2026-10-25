@@ -14,8 +14,8 @@ export function Commands() {
         </h2>
         <p className="mt-4 max-w-2xl font-mono text-sm leading-relaxed text-[#7A7A7A]">
           A built-in command line lives at the bottom of the app list. It
-          understands natural language, suggests similar commands on typos,
-          and passes anything else to the Linux shell.
+          understands natural language, suggests similar commands on typos, and
+          passes anything else to the Linux shell.
         </p>
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
           {COMMANDS.map((example) => (

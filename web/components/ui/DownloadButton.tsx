@@ -31,9 +31,7 @@ export function DownloadButton() {
       disabled={busy}
       className={cn(
         "w-full px-8 py-4 text-center font-mono text-sm font-bold tracking-[0.3em] text-black transition-all",
-        busy
-          ? "cursor-wait bg-[#7A7A7A]"
-          : "bg-[#00FF9C] hover:opacity-85"
+        busy ? "cursor-wait bg-[#7A7A7A]" : "bg-[#00FF9C] hover:opacity-85",
       )}
       aria-live="polite"
     >

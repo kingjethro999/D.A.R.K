@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import { APP } from "@/lib/app";
 import { logger } from "@/lib/logger";
 import type { DownloadState } from "@/types";
@@ -22,7 +26,9 @@ export const downloadApk = createAsyncThunk<
   try {
     const head = await fetch(APP.sourceApk, { method: "HEAD" });
     if (!head.ok) {
-      logger.error("download", "apk head check failed", { status: head.status });
+      logger.error("download", "apk head check failed", {
+        status: head.status,
+      });
       return rejectWithValue({
         message: `APK is not available on the server (HTTP ${head.status}).`,
       });
@@ -54,7 +60,7 @@ const downloadSlice = createSlice({
     },
     markDownloaded: (
       state,
-      action: PayloadAction<{ fileName: string; sizeBytes: number }>
+      action: PayloadAction<{ fileName: string; sizeBytes: number }>,
     ) => {
       state.status = "success";
       state.fileName = action.payload.fileName;

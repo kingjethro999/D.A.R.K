@@ -28,8 +28,8 @@ export function Hero() {
           </h1>
           <p className="max-w-md font-mono text-sm leading-relaxed text-[#7A7A7A]">
             Developers&apos; Adaptive Responsive Kernel. A minimalist,
-            text-only, OLED-black launcher that renders instantly and ships
-            with a real terminal.
+            text-only, OLED-black launcher that renders instantly and ships with
+            a real terminal.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
